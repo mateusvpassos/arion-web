@@ -268,11 +268,6 @@ const perm = ref(false);
 :root[data-theme='light'] .num { color: #00105c; }
 .momento { font-size: 11px; font-weight: 800; letter-spacing: .8px; color: var(--primary); margin-right: 10px; }
 .title.small { font-size: 15px; }
-.fab {
-  position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 10px; border: 0;
-  border-radius: 18px; padding: 16px 22px; font-weight: 700; font-size: 16px;
-  background: var(--primary-container); color: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.3);
-}
 .alta { max-height: 90vh; }
 .full { width: 100%; }
 .filtros { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; }

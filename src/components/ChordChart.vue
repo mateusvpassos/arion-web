@@ -56,13 +56,13 @@ const secoes = computed(() => (props.letra ? soLetra(props.song) : props.song.se
 .ch { color: var(--chord); font-weight: 700; white-space: pre; font-size: .92em; line-height: 1.1; }
 .ly { white-space: pre; }
 .sec {
-  font-family: Roboto, system-ui, sans-serif; font-size: .7em; font-weight: 800; letter-spacing: 1.2px;
+  font-family: 'Geist', system-ui, sans-serif; font-size: .7em; font-weight: 800; letter-spacing: 1.2px;
   color: var(--chord); margin: 18px 0 4px; display: inline-block;
 }
 .sec.refrao {
   background: color-mix(in srgb, var(--chord) 16%, transparent); padding: 3px 8px; border-radius: 6px;
 }
-.letra { font-family: Roboto, system-ui, sans-serif; }
+.letra { font-family: 'Geist', system-ui, sans-serif; }
 .letra .sec { font-size: .55em; margin-top: .9em; display: block; }
 .lyr { line-height: 1.3; white-space: pre-wrap; }
 .lyr.forte { font-weight: 700; }

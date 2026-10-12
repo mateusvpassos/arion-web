@@ -376,10 +376,10 @@ const sub = computed(() => {
 <style scoped>
 .tela { padding-bottom: 60vh; }
 .acordes {
-  display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: var(--surface-1);
+  display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; margin-top: -12px; background: var(--surface-1);
   border-bottom: 1px solid var(--line);
 }
-.ac { color: var(--chord); font-weight: 700; cursor: pointer; }
+.ac { color: var(--chord); font: 700 13px var(--mono); height: 30px; cursor: pointer; }
 .ac:hover { background: var(--card-hi); }
 .vel { cursor: pointer; }
 .flutua {
@@ -387,18 +387,29 @@ const sub = computed(() => {
   background: color-mix(in srgb, var(--surface-1) 85%, transparent);
 }
 .tela.cheia { padding-top: 8px; }
-.nota { display: flex; align-items: center; gap: 8px; padding: 6px 16px; background: var(--chip); font-size: 14px; }
+.nota {
+  display: flex; align-items: center; gap: 8px; margin: 10px 16px 0; padding: 8px 12px;
+  background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--primary);
+  border-radius: 8px; font-size: 13.5px; color: var(--muted);
+}
 .nota .ms { font-size: 18px; }
 .cifra { padding: 8px 16px; max-width: 1100px; }
 .barra {
-  position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 2px;
-  padding: 6px 8px; background: var(--surface-1); border-top: 1px solid var(--line); overflow-x: auto;
+  position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: safe center;
+  gap: 2px; height: 58px; padding: 0 10px; overflow-x: auto;
+  background: color-mix(in srgb, var(--surface-1) 92%, transparent); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--line);
 }
-.lbl { font-weight: 600; font-size: 13px; padding: 0 2px; }
+.lbl { font: 600 12px var(--mono); color: var(--muted); padding: 0 4px; white-space: nowrap; }
 .novo { display: flex; align-items: center; gap: 10px; border-radius: 0; flex-wrap: wrap; }
 .novo .grow { flex: 1; min-width: 200px; }
 .aviso { margin: 6px 16px; color: var(--ok); }
-.play { background: var(--chip); }
+.barra .play {
+  width: 42px; height: 42px; border-radius: 50%; margin: 0 6px;
+  background: var(--grad); color: var(--on-primary);
+  box-shadow: 0 6px 16px -6px var(--accent-ring);
+}
+.barra .play:hover { filter: brightness(1.08); background: var(--grad); color: var(--on-primary); }
 .faixa {
   position: fixed; left: 0; right: 0; top: 30vh; height: 3em; pointer-events: none;
   background: color-mix(in srgb, var(--primary) 10%, transparent);

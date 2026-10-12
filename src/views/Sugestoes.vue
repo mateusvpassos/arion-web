@@ -48,11 +48,5 @@ const aba = ref<'decidir' | 'minhas'>(paraDecidir.value.length || !minhas.value.
 
 <style scoped>
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 12px 40px; }
-.tabs { display: flex; border-bottom: 1px solid var(--line); max-width: 960px; margin: 0 auto 10px; }
-.tabs button {
-  flex: 1; background: none; border: 0; padding: 14px; color: var(--muted); font-weight: 500;
-  border-bottom: 3px solid transparent;
-}
-.tabs button.on { color: var(--primary); border-bottom-color: var(--primary); }
 .row .ms { margin: 0 4px; }
 </style>

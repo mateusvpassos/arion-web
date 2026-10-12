@@ -84,16 +84,6 @@ function novaMusica() {
 
 <style scoped>
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 12px 110px; }
-.busca { display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 16px; padding: 0 14px; margin-bottom: 10px; }
-.busca input { flex: 1; background: transparent; border: 0; padding: 14px 4px; }
-.busca .ms { color: var(--muted); }
 .trecho { color: var(--primary); font-style: italic; }
 .tags { display: flex; gap: 4px; margin-top: 4px; }
-.fab {
-  position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 10px;
-  border: 0; border-radius: 18px; padding: 16px 22px; font-weight: 700; font-size: 16px; color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--tertiary));
-  box-shadow: 0 6px 18px rgba(0,0,0,.3);
-}
-:root[data-theme='dark'] .fab { color: #1b1b21; }
 </style>

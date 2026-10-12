@@ -163,7 +163,7 @@ const fecharMenu = () => (menu.value = null);
                   <span v-for="t in h.song.tags.slice(0, 4)" :key="t" class="tag">{{ t }}</span>
                 </div>
               </div>
-              <span v-if="copiaDaObra(obraDe(h.song))" class="ms fill tem" title="Está nas suas músicas">library_add_check</span>
+              <span v-if="copiaDaObra(obraDe(h.song))" class="ms tem" title="Está nas suas músicas">library_add_check</span>
               <div class="menu-wrap" @click.stop>
                 <button class="icon-btn" @click="menu = menu === h.song.id ? null : h.song.id">
                   <span class="ms">more_vert</span>
@@ -228,24 +228,12 @@ const fecharMenu = () => (menu.value = null);
 </template>
 
 <style scoped>
-.logo { width: 32px; height: 32px; border-radius: 9px; margin-left: 4px; }
+.logo { width: 28px; height: 28px; margin: 0 2px 0 2px; }
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 12px 110px; }
-.tabs { display: flex; border-bottom: 1px solid var(--line); max-width: 960px; margin: 0 auto 10px; }
-.tabs button {
-  flex: 1; background: none; border: 0; padding: 14px; color: var(--muted); font-weight: 500;
-  border-bottom: 3px solid transparent;
-}
-.tabs button.on { color: var(--primary); border-bottom-color: var(--primary); }
-.busca {
-  display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 16px;
-  padding: 0 14px; margin-bottom: 10px;
-}
-.busca input { flex: 1; background: transparent; border: 0; padding: 14px 4px; }
-.busca .ms { color: var(--muted); }
 .trecho { color: var(--primary); font-style: italic; }
 .tags { display: flex; gap: 4px; margin-top: 4px; }
 .rep-ic { color: var(--muted); margin: 0 4px; }
-.tem { color: var(--primary); }
+.tem { color: var(--accent-text); font-size: 19px; opacity: .8; }
 .ok { color: var(--ok); margin: 0 0 8px; }
 .menu .ms { font-size: 20px; color: var(--muted); vertical-align: -5px; margin-right: 10px; }
 .menu-wrap { position: relative; }
@@ -255,13 +243,6 @@ const fecharMenu = () => (menu.value = null);
 }
 .menu button { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 12px 18px; font-size: 15px; }
 .menu button:hover { background: var(--chip); }
-.fab {
-  position: fixed; right: 24px; bottom: 24px; display: flex; align-items: center; gap: 10px;
-  border: 0; border-radius: 18px; padding: 16px 22px; font-weight: 700; font-size: 16px; color: #fff;
-  background: linear-gradient(135deg, var(--primary), var(--tertiary));
-  box-shadow: 0 6px 18px rgba(0,0,0,.3);
-}
-:root[data-theme='dark'] .fab { color: #1b1b21; }
 .drive {
   max-width: 960px; margin: 0 auto 8px; padding: 0 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }

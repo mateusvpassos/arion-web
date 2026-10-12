@@ -1,7 +1,7 @@
 // Pilha de telas, como no app (abrir música, repertório, histórico...).
 // O "voltar" do navegador volta uma tela.
 import { reactive, watch } from 'vue';
-import { aplicarTema } from './tema';
+import { aplicarTema, MARCA, PADRAO_ANTIGO } from './tema';
 
 export type Tela =
   | { nome: 'inicio' }
@@ -57,7 +57,8 @@ export const prefs = reactive({
   soLetra: ler<boolean>('soLetra', false),
   aba: ler<'songs' | 'setlists'>('aba', 'songs'),
   /** cor do tema (ARGB, como no app) */
-  cor: ler<number>('cor', 0xff3d5afe),
+  // quem nunca escolheu cor estava no índigo padrão antigo: passa p/ a marca
+  cor: ((c) => (c === PADRAO_ANTIGO ? MARCA : c))(ler<number>('cor', MARCA)),
   /** px/s da auto-rolagem quando a música não tem a sua */
   velocidade: ler<number>('velocidade', 28),
   /** quanto um toque no pedal rola (fração da tela) */

@@ -383,7 +383,7 @@ function enviar(nota: string) {
 .titulo { font-size: 20px; font-weight: 700; }
 .linha { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
 .grow { flex: 1; min-width: 200px; }
-.mini { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); gap: 2px; }
+.mini { display: flex; flex-direction: column; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--faint); gap: 4px; }
 .mini input { width: 84px; text-align: center; padding: 8px; }
 .tap { padding: 9px 14px; }
 .tags { align-items: center; }
@@ -398,11 +398,10 @@ textarea { font-family: var(--mono); font-size: 14px; line-height: 1.45; min-hei
 .previa { overflow: auto; max-height: 75vh; }
 .banner.ok { background: color-mix(in srgb, var(--ok) 25%, transparent); color: var(--fg); }
 .okt { color: var(--ok); margin: 0; }
-.modos { display: inline-flex; align-self: flex-start; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
-.seg { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; padding: 8px 18px; font-size: 14px; }
-.seg + .seg { border-left: 1px solid var(--line); }
-.seg.on { background: var(--primary-container); color: #fff; }
-:root[data-theme='light'] .seg.on { color: #00105c; }
+.modos { display: inline-flex; align-self: flex-start; gap: 4px; padding: 4px; background: var(--surface-1); border: 1px solid var(--line); border-radius: 11px; }
+.seg { display: inline-flex; align-items: center; gap: 6px; height: 32px; border: 0; border-radius: 8px; background: transparent; padding: 0 14px; font-size: 13.5px; color: var(--muted); }
+.seg:hover { color: var(--fg); }
+.seg.on { background: var(--chip); color: var(--fg); box-shadow: inset 0 0 0 1px var(--line-2); }
 .seg .ms { font-size: 18px; }
 
 /* modo Acordes */

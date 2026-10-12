@@ -48,6 +48,6 @@ const pontos = computed(() => (f.value?.casas ?? []).map((casa, i) => {
 line { stroke: color-mix(in srgb, var(--primary) 60%, transparent); stroke-width: 1.4; }
 .cheio { fill: var(--primary); }
 .solta { fill: none; stroke: var(--primary); stroke-width: 1.5; }
-.fr { fill: var(--primary); font-size: 12px; font-weight: 700; font-family: Roboto, sans-serif; }
+.fr { fill: var(--primary); font-size: 12px; font-weight: 700; font-family: 'Geist', sans-serif; }
 .nota { font-size: 11px; }
 </style>
