@@ -14,7 +14,7 @@ export async function buscarLetras(termo: string): Promise<LetraAchada[]> {
   if (!q) return [];
   // o navegador não deixa mudar o User-Agent; o LRCLIB aceita esse cabeçalho
   const r = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(q)}`, {
-    headers: { 'Lrclib-Client': 'MyMusic (cifras p/ igreja)' },
+    headers: { 'Lrclib-Client': 'MyMusic (cifras e repertorios)' },
   });
   if (!r.ok) throw new Error(`O site de letras respondeu ${r.status}`);
   const vistos = new Set<string>();

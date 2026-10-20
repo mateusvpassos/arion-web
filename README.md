@@ -16,7 +16,7 @@ A ideia: configurar tudo no PC com teclado, salvar, e abrir pronto no tablet.
 - **Músicas:** título, artista, tom, capo, **tags** e a cifra em texto
 - **Importa cifra** colada no formato "acorde acima da letra" (Cifra Club) **ou** ChordPro `[G]letra` — com **prévia ao vivo**; `Tom:`, `Capo` e `{title:}` no texto preenchem os campos
 - **Repertórios:** adicionar/remover, reordenar e **tom por música**
-- **Mesmo visual e recursos do app**: tela da música (tom, capo, fonte, só letra, rolagem com velocidade por música), repertório com **momento da Missa**, **sugestões pelo tempo litúrgico** e "tocada há X", imprimir/PDF no tom do repertório e TXT de letras
+- **Mesmo visual e recursos do app**: tela da música (tom, capo, fonte, só letra, rolagem com velocidade por música), repertório com filtro por tags e "tocada há X", imprimir/PDF no tom do repertório e TXT de letras
 - **Grupo compartilhado (Firebase)**: dono, **sugestões** (aceitar/recusar vendo a diferença), **histórico de versões** e voltar versão, **permissões**, atividade recente, e **trazer do Drive** para o grupo
 - **Sem o grupo**: modo antigo — salva no Google Drive (pasta privada `appDataFolder`) e o tablet mescla
 - Testar contra o emulador local do Firebase: `npm run dev:emu` (porta 4174; emulador em `mymusic/firebase`, `npm run emu`)

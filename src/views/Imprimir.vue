@@ -15,7 +15,6 @@ const itens = computed(() => {
   const ids = props.songId ? [props.songId] : sl.value?.songIds ?? [];
   return ids.map((id) => be.songById(id)).filter((s): s is Song => !!s).map((s) => ({
     s: transposeSong(s, sl.value?.transpose[s.id] ?? 0),
-    momento: sl.value?.moments[s.id],
   }));
 });
 const titulo = computed(() => (props.songId ? itens.value[0]?.s.title ?? '' : sl.value?.name ?? ''));
@@ -33,11 +32,11 @@ const imprimir = () => window.print();
         <h1>{{ sl.name }}</h1>
         <div v-if="sl.date">{{ fmtData(sl.date) }}</div>
         <ol>
-          <li v-for="(x, i) in itens" :key="i">{{ x.momento ? x.momento + ' · ' : '' }}{{ x.s.title }} ({{ x.s.key }})</li>
+          <li v-for="(x, i) in itens" :key="i">{{ x.s.title }} ({{ x.s.key }})</li>
         </ol>
       </header>
       <article v-for="(x, i) in itens" :key="i" class="musica">
-        <h2>{{ props.songId ? '' : `${i + 1}. ` }}{{ x.momento ? x.momento + ' · ' : '' }}{{ x.s.title }}</h2>
+        <h2>{{ props.songId ? '' : `${i + 1}. ` }}{{ x.s.title }}</h2>
         <div class="meta">Tom: {{ x.s.key }}{{ x.s.capo ? ` • capo ${x.s.capo}` : '' }}{{ x.s.artist ? ` • ${x.s.artist}` : '' }}</div>
         <ChordChart :song="x.s" :fonte="0.72" :letra="prefs.soLetra" />
       </article>

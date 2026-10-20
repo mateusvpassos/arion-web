@@ -236,7 +236,6 @@ const sub = computed(() => {
   const s = song.value, m = mostrada.value;
   if (!s || !m) return '';
   return [
-    sl.value?.moments[props.id] ?? '',
     origem.value && (obras.value[obraDe(origem.value)]?.length ?? 0) > 1 ? rotulo(origem.value) : '',
     m.key,
     s.capo ? `capo ${s.capo}${comCapo.value ? '' : ' (off)'}` : '',

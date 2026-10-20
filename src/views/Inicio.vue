@@ -10,7 +10,7 @@ import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
 } from '../acervo';
 import { searchSongs, fold, fmtData } from '../core';
-import { usoMusicas, quando, temposDe, proximoDomingo } from '../liturgia';
+import { usoMusicas, quando } from '../liturgia';
 import type { Song, Setlist } from '../types';
 import { emulador } from '../firebase';
 import { live } from '../live';
@@ -20,7 +20,7 @@ import { rascunho } from '../rascunho';
 const busca = ref('');
 const menu = ref<string | null>(null);
 const novoRep = ref(false);
-const dataNovo = ref(isoDia(proximoDomingo()));
+const dataNovo = ref(isoDia(new Date()));
 const apagar = ref<{ id: string; nome: string } | null>(null);
 const aviso = ref('');
 const avisar = (t: string) => { aviso.value = t; setTimeout(() => (aviso.value = ''), 3000); };
@@ -92,8 +92,6 @@ function confirmaApagar() {
   apagar.value = null;
 }
 
-const tempoNovo = computed(() =>
-  dataNovo.value ? temposDe(new Date(`${dataNovo.value}T00:00:00`))[0] : '');
 const fecharMenu = () => (menu.value = null);
 </script>
 
@@ -223,7 +221,7 @@ const fecharMenu = () => (menu.value = null);
       <label class="data">
         <span class="ms">event</span>
         <input v-model="dataNovo" type="date" />
-        <span class="muted">{{ tempoNovo }}</span>
+        <span class="muted">Data do evento</span>
       </label>
     </Prompt>
     <Prompt v-if="apagar" titulo="Excluir?" :texto="`O repertório “${apagar.nome}” vai sair para todos.`" sem-campo ok="Excluir"
