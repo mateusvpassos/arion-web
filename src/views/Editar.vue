@@ -16,7 +16,6 @@ import {
   serializeSections, importText, suggestKey, detectMeta, isChordSymbol, campoHarmonico, copiarAcordes,
 } from '../chordEngine';
 import { buscarLetras, paraSecoes, type LetraAchada } from '../letras';
-import { TEMPOS, MOMENTOS } from '../liturgia';
 import type { Song, Section, SongLine, Chord } from '../types';
 
 const props = defineProps<{ id: string; nova?: boolean; acervo?: boolean }>();
@@ -34,12 +33,6 @@ const aviso = ref('');
 const avisar = (t: string) => { aviso.value = t; setTimeout(() => (aviso.value = ''), 2500); };
 
 const previa = computed<Song | null>(() => (s.value ? { ...s.value, sections: importText(texto.value) } : null));
-
-function toggle(list: string[], v: string, ordem: readonly string[]) {
-  const i = list.indexOf(v);
-  if (i >= 0) list.splice(i, 1);
-  else { list.push(v); list.sort((a, b) => ordem.indexOf(a) - ordem.indexOf(b)); }
-}
 
 function addTag() {
   const t = tag.value.trim().toLowerCase();
@@ -334,26 +327,6 @@ function enviar(nota: string) {
       </div>
       <input v-model="s.notes" placeholder="Anotações (ex.: entra suave, repete 2x)" class="full" />
 
-      <details class="lit" :open="!!(s.tempos.length || s.momentos.length)">
-        <summary>
-          <span class="ms">church</span>
-          {{ [...s.tempos, ...s.momentos].join(' · ') || 'Tempo litúrgico e momento da Missa' }}
-        </summary>
-        <div class="faint lbl">Tempo litúrgico (nenhum = qualquer tempo)</div>
-        <div class="chips">
-          <button v-for="t in TEMPOS" :key="t" class="chip" :class="{ on: s.tempos.includes(t) }"
-            @click="toggle(s.tempos, t, TEMPOS)">
-            <span v-if="s.tempos.includes(t)" class="ms">check</span>{{ t }}
-          </button>
-        </div>
-        <div class="faint lbl">Momento da Missa</div>
-        <div class="chips">
-          <button v-for="m in MOMENTOS" :key="m" class="chip" :class="{ on: s.momentos.includes(m) }"
-            @click="toggle(s.momentos, m, MOMENTOS)">
-            <span v-if="s.momentos.includes(m)" class="ms">check</span>{{ m }}
-          </button>
-        </div>
-      </details>
 
       <div class="modos">
         <button class="seg" :class="{ on: modo === 'acordes' }" @click="setModo('acordes')">
@@ -490,8 +463,6 @@ function enviar(nota: string) {
 .tags { align-items: center; }
 .tag-in { width: 110px; padding: 7px 12px; }
 .full { width: 100%; }
-.lit summary { cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 6px 0; }
-.lit summary .ms { color: var(--primary); font-size: 20px; }
 .lbl { font-size: 12px; margin: 8px 0 4px; }
 .dica { margin: 4px 0 0; font-size: 13px; }
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 60vh; }
