@@ -14,6 +14,8 @@ export type Tela =
   | { nome: 'sugestao'; id: string }
   | { nome: 'versoes'; id: string; acervo?: boolean }
   | { nome: 'grupo' }
+  | { nome: 'grupoDetalhe'; id: string }
+  | { nome: 'grupoAdicionar'; id: string }
   | { nome: 'atividade' }
   | { nome: 'imprimir'; setlistId?: string; songId?: string }
   | { nome: 'config' }

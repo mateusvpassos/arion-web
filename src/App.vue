@@ -15,6 +15,8 @@ import Sugestoes from './views/Sugestoes.vue';
 import Sugestao from './views/Sugestao.vue';
 import Versoes from './views/Versoes.vue';
 import Grupo from './views/Grupo.vue';
+import GrupoDetalhe from './views/GrupoDetalhe.vue';
+import GrupoAdicionar from './views/GrupoAdicionar.vue';
 import Atividade from './views/Atividade.vue';
 import Imprimir from './views/Imprimir.vue';
 import Minhas from './views/Minhas.vue';
@@ -53,6 +55,8 @@ ouvir({
   <Sugestao v-else-if="t.nome === 'sugestao'" :key="chave" :id="t.id" />
   <Versoes v-else-if="t.nome === 'versoes'" :key="chave" :id="t.id" :acervo="t.acervo" />
   <Grupo v-else-if="t.nome === 'grupo'" />
+  <GrupoDetalhe v-else-if="t.nome === 'grupoDetalhe'" :key="chave" :id="t.id" />
+  <GrupoAdicionar v-else-if="t.nome === 'grupoAdicionar'" :key="chave" :id="t.id" />
   <Atividade v-else-if="t.nome === 'atividade'" />
   <Config v-else-if="t.nome === 'config'" />
   <AoVivo v-else-if="t.nome === 'aovivo'" />

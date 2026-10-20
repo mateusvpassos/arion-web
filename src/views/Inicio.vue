@@ -5,7 +5,7 @@ import AppBar from '../components/AppBar.vue';
 import Prompt from '../components/Prompt.vue';
 import { abrir, prefs } from '../nav';
 import * as be from '../backend';
-import { cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar } from '../cloud';
+import { cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo } from '../cloud';
 import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
 } from '../acervo';
@@ -101,6 +101,10 @@ const fecharMenu = () => (menu.value = null);
   <div @click="fecharMenu">
     <AppBar titulo="MyMusic" sem-voltar>
       <template #logo><img src="/icon.png" class="logo" alt="" /></template>
+      <!-- grupo em uso; clicar abre a lista de grupos -->
+      <template v-if="cloud.grupo" #sub>
+        <button class="grupo-em-uso" @click="abrir({ nome: 'grupo' })">{{ nomeDoGrupo(cloud.grupo) }} ▾</button>
+      </template>
       <button v-if="ativa" class="icon-btn" title="Minhas músicas" @click="abrir({ nome: 'minhas' })">
         <span class="ms">library_music</span>
       </button>
@@ -111,7 +115,7 @@ const fecharMenu = () => (menu.value = null);
       <button v-if="ativa" class="icon-btn" title="Atividade recente" @click="abrir({ nome: 'atividade' })">
         <span class="ms">history</span>
       </button>
-      <button v-if="disponivel" class="icon-btn" title="Conta e compartilhamento" @click="abrir({ nome: 'grupo' })">
+      <button v-if="disponivel" class="icon-btn" title="Grupos" @click="abrir({ nome: 'grupo' })">
         <span class="ms">{{ ativa ? 'group' : 'cloud_off' }}</span>
       </button>
       <button class="icon-btn" :class="{ on: live.ativo }" title="Ao vivo" @click="abrir({ nome: 'aovivo' })">
@@ -228,6 +232,8 @@ const fecharMenu = () => (menu.value = null);
 </template>
 
 <style scoped>
+.grupo-em-uso { all: unset; cursor: pointer; font: inherit; color: inherit; }
+.grupo-em-uso:hover { color: var(--fg); }
 .logo { width: 28px; height: 28px; margin: 0 2px 0 2px; }
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 12px 110px; }
 .trecho { color: var(--primary); font-style: italic; }

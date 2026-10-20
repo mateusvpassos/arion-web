@@ -14,8 +14,13 @@ export { disponivel };
 import type { Song, Setlist, RawSong, RawSetlist } from './types';
 import { songFromRaw, songToRaw, setlistFromRaw, setlistToRaw } from './types';
 import { podeEditar as pode, resumoMudancas } from './core';
+import { uid } from './chordEngine';
 
-export interface Grupo { id: string; nome: string; dono: string; membros: string[] }
+export interface Grupo {
+  id: string; nome: string; dono: string; membros: string[];
+  /** a biblioteca pessoal, criada sozinha no 1º login */
+  pessoal: boolean;
+}
 
 export interface Sugestao {
   id: string; songId: string; titulo: string; song: Song; base: number;
@@ -130,21 +135,29 @@ function ouvirGrupos() {
       // sem grupo nenhum (confirmado pelo servidor): cria a biblioteca pessoal
       if (!q.docs.length && !q.metadata.fromCache && !criando) {
         criando = true;
-        criarGrupo(`Biblioteca de ${cloud.user!.nome}`).finally(() => { criando = false; });
+        criarGrupo(`Biblioteca de ${cloud.user!.nome}`, true).finally(() => { criando = false; });
         return;
       }
-      cloud.grupos = q.docs.map((d) => ({
-        id: d.id,
-        nome: d.data().nome ?? '',
-        dono: d.data().dono ?? '',
-        membros: d.data().membros ?? [],
-      })).sort((a, b) => a.nome.localeCompare(b.nome));
+      cloud.grupos = q.docs
+        .filter((d) => !d.data().apagado) // apagado pelo dono (as regras não deixam apagar o doc)
+        .map((d) => {
+          const j = d.data();
+          const nome: string = j.nome ?? '';
+          return {
+            id: d.id, nome, dono: j.dono ?? '', membros: j.membros ?? [],
+            // grupos antigos não têm o campo: a pessoal era "Biblioteca de <nome>"
+            pessoal: j.pessoal === true || (j.pessoal == null && nome.startsWith('Biblioteca de ')),
+          };
+        })
+        // a minha pessoal primeiro, depois por nome
+        .sort((a, b) => Number(ehMinha(b)) - Number(ehMinha(a)) || a.nome.localeCompare(b.nome));
       const atual = cloud.grupo && cloud.grupos.find((g) => g.id === cloud.grupo!.id);
       if (cloud.grupo && !atual) pararGrupo(); // tiraram do grupo
       else if (atual) cloud.grupo = atual;
       else {
         const salvo = cloud.grupos.find((g) => g.id === lerPref());
-        const g = salvo ?? (cloud.grupos.length === 1 ? cloud.grupos[0] : null);
+        // nada escolhido neste navegador: abre a minha biblioteca
+        const g = salvo ?? cloud.grupos.find(ehMinha) ?? (cloud.grupos.length === 1 ? cloud.grupos[0] : null);
         if (g) abrirGrupo(g);
       }
     },
@@ -154,14 +167,18 @@ function ouvirGrupos() {
 
 let criando = false;
 
-export async function criarGrupo(nome: string) {
+export const ehMinha = (g: Grupo) => g.pessoal && g.dono === eu.value;
+export const nomeDoGrupo = (g: Grupo) => (ehMinha(g) ? 'Minha biblioteca' : g.nome);
+
+export async function criarGrupo(nome: string, pessoal = false) {
   if (!db || !cloud.user) return;
   const ref = doc(collection(db, 'grupos'));
   // espera o servidor: ler o grupo antes dele existir lá dá "permission denied"
   try {
-    await setDoc(ref, { nome, dono: eu.value, membros: [eu.value], criadoEm: serverTimestamp() });
+    await setDoc(ref, { nome, dono: eu.value, membros: [eu.value], pessoal, criadoEm: serverTimestamp() });
   } catch (e) { falhou(e); return; }
-  abrirGrupo({ id: ref.id, nome, dono: eu.value, membros: [eu.value] });
+  // já tem um em uso: o novo só aparece na lista
+  if (!cloud.grupo) abrirGrupo({ id: ref.id, nome, dono: eu.value, membros: [eu.value], pessoal });
 }
 
 export function escolherGrupo(g: Grupo) {
@@ -170,26 +187,98 @@ export function escolherGrupo(g: Grupo) {
   abrirGrupo(g);
 }
 
-const gRef = () => doc(db!, 'grupos', cloud.grupo!.id);
 const col = (nome: string) => collection(db!, 'grupos', cloud.grupo!.id, nome);
+const refDe = (g: Grupo) => doc(db!, 'grupos', g.id);
+const colDe = (g: Grupo, nome: string) => collection(db!, 'grupos', g.id, nome);
 
-export async function convidar(email: string) {
+export function renomearGrupo(g: Grupo, nome: string) {
+  const n = nome.trim();
+  if (!n || g.dono !== eu.value) return;
+  updateDoc(refDe(g), { nome: n }).catch(falhou);
+}
+
+/** Só o dono; a biblioteca pessoal não se apaga. */
+export function apagarGrupo(g: Grupo) {
+  if (g.dono !== eu.value || g.pessoal) return;
+  if (cloud.grupo?.id === g.id) {
+    const minha = cloud.grupos.find(ehMinha);
+    if (minha) escolherGrupo(minha);
+  }
+  updateDoc(refDe(g), { apagado: true }).catch(falhou);
+}
+
+export async function convidar(email: string, g: Grupo | null = cloud.grupo) {
   const e = email.trim().toLowerCase();
-  if (!cloud.grupo || !e || cloud.grupo.membros.includes(e)) return;
-  updateDoc(gRef(), { membros: arrayUnion(e) }).catch(falhou);
+  if (!g || !e || g.membros.includes(e)) return;
+  updateDoc(refDe(g), { membros: arrayUnion(e) }).catch(falhou);
 }
 
-export async function remover(email: string) {
-  if (!cloud.grupo || email === cloud.grupo.dono) return;
-  updateDoc(gRef(), { membros: arrayRemove(email) }).catch(falhou);
+export async function remover(email: string, g: Grupo | null = cloud.grupo) {
+  if (!g || email === g.dono) return;
+  updateDoc(refDe(g), { membros: arrayRemove(email) }).catch(falhou);
 }
 
-export async function setConfianca(emails: string[]) {
+export async function setConfianca(emails: string[], g: Grupo | null = cloud.grupo) {
   if (!cloud.user || !db) return;
   // vale p/ o acervo geral e p/ o grupo
   setDoc(doc(db, 'confianca', eu.value), { editores: emails }).catch(falhou);
-  if (!ativa.value) return;
-  setDoc(doc(col('confianca'), eu.value), { editores: emails }).catch(falhou);
+  if (!g) return;
+  setDoc(doc(colDe(g, 'confianca'), eu.value), { editores: emails }).catch(falhou);
+}
+
+// ---------------- músicas de um grupo (em uso ou não) ----------------
+
+const porTitulo = (a: Song, b: Song) => a.title.localeCompare(b.title, 'pt');
+
+export function ouvirMusicasDe(g: Grupo, cb: (l: Song[]) => void): Unsubscribe {
+  return onSnapshot(colDe(g, 'musicas'), (q) => cb(
+    q.docs.filter((d) => !d.data().apagada).map((d) => songFromRaw(d.data() as RawSong)).sort(porTitulo),
+  ), falhou);
+}
+
+export function ouvirRepertoriosDe(g: Grupo, cb: (l: Setlist[]) => void): Unsubscribe {
+  return onSnapshot(colDe(g, 'repertorios'), (q) => cb(
+    q.docs.filter((d) => !d.data().apagada).map((d) => setlistFromRaw(d.data() as RawSetlist))
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt')),
+  ), falhou);
+}
+
+/** Quem eu deixei editar tudo meu neste grupo. */
+export function ouvirConfiancaEm(g: Grupo, cb: (l: string[]) => void): Unsubscribe {
+  return onSnapshot(doc(colDe(g, 'confianca'), eu.value), (d) => cb(d.data()?.editores ?? []), falhou);
+}
+
+/** Põe no grupo cópias destas músicas do acervo (quem põe é o dono da cópia).
+ *  [ja] = de quais músicas do acervo o grupo já tem cópia. */
+export async function adicionarAoGrupo(g: Grupo, doAcervo: Song[], ja: Set<string>) {
+  if (!db || !cloud.user) return;
+  const b = writeBatch(db);
+  for (const v of doAcervo) {
+    if (ja.has(v.id)) continue;
+    const c: Song = {
+      ...JSON.parse(JSON.stringify(v)),
+      id: uid(), dono: eu.value, donoNome: cloud.user.nome, editores: [], versao: 1,
+      por: eu.value, porNome: cloud.user.nome, baseId: v.id, baseRev: v.versao,
+      updatedAt: new Date().toISOString(),
+    };
+    const ref = doc(colDe(g, 'musicas'), c.id);
+    b.set(ref, { ...songToRaw(c), apagada: false });
+    b.set(doc(collection(ref, 'versoes')), {
+      n: 1, song: songToRaw(c), por: eu.value, porNome: cloud.user.nome,
+      em: serverTimestamp(), acao: 'criou', resumo: [],
+    });
+    if (cloud.grupo?.id === g.id) naNuvem.songs.add(c.id);
+  }
+  await b.commit().catch(falhou);
+}
+
+/** Tira a música do grupo (só quem é dono dela). */
+export function tirarDoGrupo(g: Grupo, s: Song) {
+  if (s.dono !== eu.value || !cloud.user) return;
+  updateDoc(doc(colDe(g, 'musicas'), s.id), {
+    apagada: true, apagadaPor: eu.value, apagadaPorNome: cloud.user.nome,
+    updatedAt: new Date().toISOString(),
+  }).catch(falhou);
 }
 
 /** Só campos de ligação (de qual versão do acervo veio), sem revisão nova. */
