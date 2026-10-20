@@ -12,7 +12,10 @@ import * as be from '../backend';
 import { sugerir, nomeDe as nomeGrupo } from '../cloud';
 import { acervo, salvarA, sugerirA, podeEditarA, nomeDe as nomeAcervo, rotulo } from '../acervo';
 import { rascunho } from '../rascunho';
-import { serializeSections, importText, suggestKey, detectMeta, isChordSymbol } from '../chordEngine';
+import {
+  serializeSections, importText, suggestKey, detectMeta, isChordSymbol, campoHarmonico, copiarAcordes,
+} from '../chordEngine';
+import { buscarLetras, paraSecoes, type LetraAchada } from '../letras';
 import { TEMPOS, MOMENTOS } from '../liturgia';
 import type { Song, Section, SongLine, Chord } from '../types';
 
@@ -103,11 +106,12 @@ const mudouLetra = () => { texto.value = serializeSections(secs.value); };
 const PALETA = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'Cm', 'Dm', 'Em', 'Fm', 'Gm', 'Am', 'Bm',
   'C7', 'D7', 'E7', 'G7', 'A7', 'B7', 'Cmaj7', 'Dm7', 'Em7', 'Gsus4'];
 const extras = ref<string[]>([]);
-// acordes desta música primeiro (é o que mais se usa ao acertar a cifra)
+// os do tom (campo harmônico) e os desta música primeiro
+const doTom = computed(() => new Set(campoHarmonico(s.value?.key ?? '')));
 const paleta = computed(() => {
   const da = new Set<string>();
   for (const sec of secs.value) for (const l of sec.lines) for (const c of l.chords) if (isChordSymbol(c.sym)) da.add(c.sym);
-  return [...new Set([...extras.value, ...da, ...PALETA])];
+  return [...new Set([...extras.value, ...doTom.value, ...da, ...PALETA])];
 });
 const novoAcorde = ref(false);
 function addExtra(v: string) {
@@ -205,6 +209,60 @@ function novaSecao() {
 }
 const menuSec = ref<number | null>(null);
 
+// ---- copiar acordes de outra parte (estrofes com a mesma melodia) ----
+const temAcordes = (sec: Section) => sec.lines.some((l) => l.chords.length);
+const copiandoPara = ref<number | null>(null);
+const fontes = computed(() => copiandoPara.value === null ? []
+  : secs.value.map((sec, i) => ({ sec, i })).filter((x) => x.i !== copiandoPara.value && temAcordes(x.sec)));
+const primeiraLinha = (sec: Section) => (sec.lines.find((l) => l.lyric.trim()) ?? sec.lines[0])?.lyric.trim() ?? '';
+function copiarDe(de: number) {
+  const dst = secs.value[copiandoPara.value!];
+  copiandoPara.value = null;
+  if (temAcordes(dst) && !confirm('Trocar os acordes desta parte? Os que já estão aqui saem.')) return;
+  // linha a linha, pulando as vazias dos dois lados
+  const a = secs.value[de].lines.filter((l) => l.lyric.trim() || l.chords.length);
+  const b = dst.lines.filter((l) => l.lyric.trim());
+  for (let i = 0; i < b.length && i < a.length; i++) b[i].chords = copiarAcordes(a[i], b[i]);
+  mudou();
+}
+
+// ---- buscar letra (LRCLIB) ----
+const buscandoLetra = ref(false);
+const termoLetra = ref('');
+const letras = ref<LetraAchada[] | null>(null);
+const vendoLetra = ref<LetraAchada | null>(null);
+const carregandoLetra = ref(false);
+const erroLetra = ref('');
+function abrirBuscaLetra() {
+  const t = s.value!.title.trim();
+  termoLetra.value = [t && t !== 'Nova música' ? t : '', s.value!.artist.trim()].filter(Boolean).join(' ');
+  letras.value = null;
+  vendoLetra.value = null;
+  erroLetra.value = '';
+  buscandoLetra.value = true;
+  if (termoLetra.value) procurarLetra();
+}
+async function procurarLetra() {
+  carregandoLetra.value = true;
+  erroLetra.value = '';
+  vendoLetra.value = null;
+  try { letras.value = await buscarLetras(termoLetra.value); }
+  catch (e) { erroLetra.value = `Não deu p/ buscar (precisa de internet): ${(e as Error).message}`; }
+  finally { carregandoLetra.value = false; }
+}
+function usarLetra(l: LetraAchada) {
+  const x = s.value!;
+  const temLetra = importText(texto.value).some((sec) => sec.lines.some((li) => li.lyric.trim()));
+  if (temLetra && !confirm('Trocar a letra? A letra e os acordes que já estão aqui saem.')) return;
+  buscandoLetra.value = false;
+  secs.value = paraSecoes(l.letra);
+  if (!x.title.trim() || x.title === 'Nova música') x.title = l.titulo;
+  if (!x.artist.trim()) x.artist = l.artista;
+  modo.value = 'acordes';
+  armado.value = '';
+  mudou();
+}
+
 function montar(): Song {
   const x = s.value!;
   x.sections = importText(texto.value);
@@ -244,6 +302,7 @@ function enviar(nota: string) {
     <AppBar :titulo="sugestao ? 'Sugerir mudança' : props.nova ? 'Nova música' : 'Editar'"
       :sub="props.acervo && origem ? `Acervo — ${rotulo(origem)}` : ''">
       <button class="icon-btn" title="Desfazer" :disabled="!historico.length" @click="desfazer"><span class="ms">undo</span></button>
+      <button class="icon-btn" title="Buscar letra" @click="abrirBuscaLetra"><span class="ms">lyrics</span></button>
       <button class="icon-btn" title="Copiar como texto" @click="copiar"><span class="ms">content_copy</span></button>
       <button class="btn text" @click="voltar">Cancelar</button>
       <button class="btn" @click="salvar">
@@ -333,6 +392,8 @@ function enviar(nota: string) {
               <button class="icon-btn" title="Mais" @click.stop="menuSec = menuSec === si ? null : si"><span class="ms">more_vert</span></button>
               <div v-if="menuSec === si" class="menu" @click.stop="menuSec = null">
                 <button @click="renomear = si"><span class="ms">edit</span>Renomear</button>
+                <button v-if="secs.some((x, i) => i !== si && temAcordes(x))" @click="copiandoPara = si">
+                  <span class="ms">format_paint</span>Copiar acordes de outra parte</button>
                 <button @click="duplicarSecao(si)"><span class="ms">content_copy</span>Duplicar</button>
                 <button @click="apagarSecao(si)"><span class="ms">delete</span>Excluir</button>
               </div>
@@ -358,7 +419,7 @@ function enviar(nota: string) {
         <div class="paleta">
           <span class="plbl">Acordes</span>
           <div class="pchips">
-            <button v-for="c in paleta" :key="c" class="chip pc" :class="{ on: armado === c }" draggable="true"
+            <button v-for="c in paleta" :key="c" class="chip pc" :class="{ on: armado === c, tom: doTom.has(c) }" draggable="true"
               @dragstart="pegar($event, { sym: c })" @click="armado = armado === c ? '' : c">{{ c }}</button>
             <button class="chip" title="Outro acorde" @click="novoAcorde = true"><span class="ms">add</span></button>
           </div>
@@ -368,6 +429,46 @@ function enviar(nota: string) {
     </div>
     <Prompt v-if="pedirNota" titulo="Enviar sugestão" dica="Recado p/ o dono (opcional) — ex.: acorde errado no refrão"
       ok="Enviar" @fechar="pedirNota = false" @ok="enviar" />
+    <!-- copiar acordes: de qual parte -->
+    <div v-if="copiandoPara !== null" class="scrim center" @click.self="copiandoPara = null">
+      <div class="dialog">
+        <h3>Copiar acordes de qual parte?</h3>
+        <button v-for="f in fontes" :key="f.i" class="opcao" @click="copiarDe(f.i)">
+          <b>{{ f.sec.name || '(sem nome)' }}</b> — {{ primeiraLinha(f.sec) }}</button>
+        <div class="actions"><button class="btn text" @click="copiandoPara = null">Cancelar</button></div>
+      </div>
+    </div>
+    <!-- buscar letra -->
+    <div v-if="buscandoLetra" class="scrim center" @click.self="buscandoLetra = false">
+      <div class="dialog letra-dlg">
+        <template v-if="vendoLetra">
+          <h3>{{ vendoLetra.titulo }}</h3>
+          <p class="faint">{{ [vendoLetra.artista, vendoLetra.album].filter(Boolean).join(' · ') }}</p>
+          <pre class="letra">{{ vendoLetra.letra }}</pre>
+          <div class="actions">
+            <button class="btn text" @click="vendoLetra = null">Voltar</button>
+            <button class="btn" @click="usarLetra(vendoLetra)">Usar esta letra</button>
+          </div>
+        </template>
+        <template v-else>
+          <h3>Buscar letra</h3>
+          <form class="linha" @submit.prevent="procurarLetra">
+            <input v-model="termoLetra" class="grow" autofocus placeholder="Nome da música (e o artista, se souber)" />
+            <button class="btn"><span class="ms">search</span>Buscar</button>
+          </form>
+          <p v-if="carregandoLetra" class="faint">Buscando…</p>
+          <p v-if="erroLetra" class="error">{{ erroLetra }}</p>
+          <p v-if="!letras && !carregandoLetra" class="faint">
+            As letras vêm do LRCLIB (lrclib.net), uma base aberta. Os acordes você põe depois.</p>
+          <p v-else-if="letras && !letras.length" class="faint">Nada encontrado. Tente com o nome do artista.</p>
+          <div v-if="letras?.length" class="resultados">
+            <button v-for="(l, i) in letras" :key="i" class="opcao" @click="vendoLetra = l">
+              <b>{{ l.titulo }}</b><span class="faint"> · {{ l.artista }} · {{ l.letra.split('\n')[0] }}</span></button>
+          </div>
+          <div class="actions"><button class="btn text" @click="buscandoLetra = false">Fechar</button></div>
+        </template>
+      </div>
+    </div>
     <Prompt v-if="novoAcorde" titulo="Acorde" dica="Ex.: F#m7" ok="Usar" @fechar="novoAcorde = false" @ok="addExtra" />
     <Prompt v-if="editando" titulo="Editar acorde" ok="OK"
       :valor="secs[editando.si].lines[editando.li].chords[editando.ci]?.sym" @fechar="editando = null" @ok="salvarAcorde">
@@ -427,6 +528,15 @@ textarea { font-family: var(--mono); font-size: 14px; line-height: 1.45; min-hei
   border-radius: 0; background: transparent; line-height: 1.25; letter-spacing: 0;
 }
 .vletra:focus { border-bottom: 1px solid var(--primary); }
+.pc.tom:not(.on) { border-color: var(--accent-ring); }
+.opcao {
+  all: unset; display: block; cursor: pointer; padding: 9px 10px; border-radius: 8px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box;
+}
+.opcao:hover { background: var(--chip); }
+.letra-dlg { width: min(600px, 92vw); }
+.resultados { max-height: 50vh; overflow: auto; margin: 6px 0; }
+.letra { white-space: pre-wrap; font-family: inherit; line-height: 1.45; max-height: 52vh; overflow: auto; margin: 6px 0; }
 .paleta {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; display: flex; align-items: center; gap: 8px;
   padding: 8px 12px; background: var(--surface-1); border-top: 1px solid var(--line);

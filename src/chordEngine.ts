@@ -419,3 +419,51 @@ export function suggestKey(sections: Section[]): string | null {
 export function uid(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
 }
+
+// ---- criar cifra (igual a chord_engine.dart) ----
+
+const TONS_BEMOL = new Set(['F', 'Bb', 'Eb', 'Ab', 'Db', 'Dm', 'Gm', 'Cm', 'Fm', 'Bbm', 'Ebm']);
+
+/** Acordes do tom (campo harmônico) + os de passagem mais comuns, p/ a paleta.
+ *  Ex.: G -> G Am Bm C D Em F#° D7 ... ; Em -> Em F#° G Am Bm C D B7 ... */
+export function campoHarmonico(key: string): string[] {
+  const m = PARTS.exec(key.trim());
+  if (!m || noteId(m[1]) < 0) return [];
+  const root = m[1];
+  const qual = m[2] ?? '';
+  const menor = qual.startsWith('m') && !qual.startsWith('maj');
+  const bemol = TONS_BEMOL.has(menor ? `${root}m` : root);
+  const n = (st: number) => transposeNote(root, st, bemol);
+  const l = menor
+    // i ii° III iv v VI VII + V7 (harmônica) e iv7/i7
+    ? [`${n(0)}m`, `${n(2)}°`, n(3), `${n(5)}m`, `${n(7)}m`, n(8), n(10), `${n(7)}7`, n(7), `${n(0)}m7`, `${n(5)}m7`]
+    // I ii iii IV V vi vii° + V7, I7 (vai p/ IV), II7 (vai p/ V), I/3 e V/7
+    : [n(0), `${n(2)}m`, `${n(4)}m`, n(5), n(7), `${n(9)}m`, `${n(11)}°`, `${n(7)}7`, `${n(0)}7`, `${n(2)}7`,
+      `${n(0)}/${n(4)}`, `${n(7)}/${n(11)}`, `${n(2)}m7`, `${n(9)}m7`, `${n(7)}sus4`];
+  return [...new Set(l)];
+}
+
+// posição -> começo da palavra mais perto (ou a própria, se já for)
+function inicioDaPalavra(s: string, i: number): number {
+  if (i >= s.length || i === 0 || s[i - 1] === ' ') return i;
+  let a = i, b = i;
+  while (a > 0 && s[a - 1] !== ' ') a--;
+  while (b < s.length && s[b] !== ' ') b++;
+  if (b < s.length) b++; // começo da próxima palavra
+  return i - a <= b - i || b >= s.length ? a : b;
+}
+
+/** Acordes da linha [src] na linha [dst] (estrofes com a mesma melodia):
+ *  mesma proporção na linha, encostando no começo da palavra. */
+export function copiarAcordes(src: SongLine, dst: SongLine): Chord[] {
+  const ls = src.lyric.length, ld = dst.lyric.length;
+  const out: Chord[] = [];
+  for (const c of src.chords) {
+    let i = ls === 0 || ld === 0 ? Math.min(c.idx, ld) : Math.round((c.idx * ld) / ls);
+    i = inicioDaPalavra(dst.lyric, Math.max(0, Math.min(ld, i)));
+    // dois acordes não ficam na mesma letra
+    while (out.some((o) => o.idx === i) && i < ld) i++;
+    out.push({ sym: c.sym, idx: i });
+  }
+  return out;
+}
