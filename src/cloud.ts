@@ -79,7 +79,6 @@ function falhou(e: unknown) {
 
 if (auth) {
   onAuthStateChanged(auth, (u: User | null) => {
-    if (u && cloud.erro?.startsWith('Continue no navegador')) cloud.erro = null;
     cloud.user = u?.email
       ? { email: u.email.toLowerCase(), nome: u.displayName || u.email.split('@')[0] }
       : null;
@@ -87,33 +86,9 @@ if (auth) {
   });
 }
 
-// MyMusic desktop (Electron): o Google não deixa entrar dentro do app; o
-// login abre no navegador e o token volta por aqui (desktop/main.cjs)
-interface Desktop {
-  entrarGoogle: () => Promise<boolean>;
-  aoToken: (cb: (t: { idToken: string; accessToken: string | null }) => void) => void;
-}
-const desktop = (window as unknown as { mymusicDesktop?: Desktop }).mymusicDesktop;
-export const ehDesktop = !!desktop;
-desktop?.aoToken(async ({ idToken, accessToken }) => {
-  if (!auth) return;
-  cloud.erro = null;
-  try {
-    const r = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken, accessToken));
-    if (!r.user.displayName && r.user.email) {
-      await updateProfile(r.user, { displayName: r.user.email.split('@')[0] });
-    }
-  } catch (e) { falhou(e); }
-});
-
 export async function entrar() {
   if (!auth) return;
   cloud.erro = null;
-  if (desktop) {
-    await desktop.entrarGoogle();
-    cloud.erro = 'Continue no navegador que abriu (entre com a conta Google e volte aqui).';
-    return;
-  }
   try {
     const r = await signInWithPopup(auth, new GoogleAuthProvider());
     if (!r.user.displayName && r.user.email) {

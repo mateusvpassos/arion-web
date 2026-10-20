@@ -1,6 +1,6 @@
 // Gera os PNGs do ícone a partir de desktop/icon.svg usando o próprio Electron
 // (mesmo jeito do Strata). Uso: npm run icons
-//   web/desktop: public/icon.png (512) e desktop/icon.png (1024)
+//   web: public/icon.png (512)
 //   app Android (../mymusic/assets/icon): icon, background, foreground, monochrome
 const { app, BrowserWindow } = require('electron');
 const fs = require('fs');
@@ -22,7 +22,6 @@ const fundo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${d
 
 const saidas = [
   { svg, tam: 512, para: path.join(raiz, 'public', 'icon.png') },
-  { svg, tam: 1024, para: path.join(__dirname, 'icon.png') },
 ];
 const appIcon = path.join(raiz, '..', 'mymusic', 'assets', 'icon');
 if (fs.existsSync(appIcon)) {
