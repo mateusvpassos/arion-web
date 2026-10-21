@@ -1,10 +1,10 @@
 // Confere que o parser web dá exatamente o mesmo resultado do app Flutter.
-// Uso: rode antes `flutter test test/parser_parity_test.dart` no mymusic,
+// Uso: rode antes `flutter test test/parser_parity_test.dart` no arion,
 // depois `node scripts/parity.ts`.
 import { readFileSync } from 'node:fs';
 import { importText, detectMeta, suggestKey, transposeChord } from '../src/chordEngine.ts';
 
-const APP = '../mymusic';
+const APP = '../arion';
 const cases: string[] = JSON.parse(readFileSync(`${APP}/test/fixtures/parser_cases.json`, 'utf8'));
 const dart = JSON.parse(readFileSync(`${APP}/build/parser_dart.json`, 'utf8'));
 

@@ -13,12 +13,12 @@ import {
  * null = nuvem ainda não configurada (o editor usa o Drive como antes).
  */
 const firebaseConfig: FirebaseOptions | null = {
-  apiKey: 'AIzaSyDJrINzDLOL52Mz5au7H0zay0pdmMrPUsg',
-  authDomain: 'cifras-779b6.firebaseapp.com',
-  projectId: 'cifras-779b6',
-  storageBucket: 'cifras-779b6.firebasestorage.app',
-  messagingSenderId: '167404504785',
-  appId: '1:167404504785:web:a1c18245a702ea718467f0',
+  apiKey: 'AIzaSyC--2c2wMRa4pNx9LWBc1UR1dUJtKnNZT0',
+  authDomain: 'arion-cifras.firebaseapp.com',
+  projectId: 'arion-cifras',
+  storageBucket: 'arion-cifras.firebasestorage.app',
+  messagingSenderId: '911820467893',
+  appId: '1:911820467893:web:cae4a90cb261cb9d8058fc',
 };
 
 const EMU = (import.meta.env.VITE_MYMUSIC_EMU as string | undefined) ?? '';
@@ -29,7 +29,7 @@ export let auth: Auth | null = null;
 export let db: Firestore | null = null;
 
 const opts: FirebaseOptions | null = emulador
-  ? { apiKey: 'demo-key', projectId: 'demo-mymusic', appId: '1:1:web:1', authDomain: 'demo-mymusic.firebaseapp.com' }
+  ? { apiKey: 'demo-key', projectId: 'demo-arion', appId: '1:1:web:1', authDomain: 'demo-arion.firebaseapp.com' }
   : firebaseConfig;
 
 if (opts) {

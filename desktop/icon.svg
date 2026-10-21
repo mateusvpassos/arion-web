@@ -13,7 +13,7 @@
   <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bg)"/>
   <circle cx="256" cy="256" r="210" fill="url(#glow)"/>
   <rect x="17.5" y="17.5" width="477" height="477" rx="110.5" fill="none" stroke="#fff" stroke-opacity=".09" stroke-width="3"/>
-  <!-- monograma M, no mesmo traço do K do Kino e do S do Strata -->
-  <path d="M152 372 V148 L256 264 L360 148 V372" stroke="url(#g)" stroke-width="66"
+  <!-- monograma A (Arion), no mesmo traço do K do Kino e do S do Strata -->
+  <path d="M146 376 L256 140 L366 376 M196 300 H316" stroke="url(#g)" stroke-width="66"
         stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>

@@ -1,5 +1,5 @@
 # Publica o web no GitHub Pages a cada push na main:
-# https://mateusvpassos.github.io/mymusic-web/
+# https://mateusvpassos.github.io/arion-web/
 name: Pages
 
 on:

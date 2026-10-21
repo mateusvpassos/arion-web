@@ -1,6 +1,6 @@
-# 🎵 MyMusic — Editor Web
+# 🎵 Arion — Editor Web
 
-Editor leve (roda **local**, no navegador) para cadastrar **músicas** e **repertórios** e salvar direto no **Google Drive** — sincroniza automático com o app de tablet [**mymusic**](https://github.com/mateusvpassos/mymusic).
+Editor leve (roda **local**, no navegador) para cadastrar **músicas** e **repertórios** e salvar direto no **Google Drive** — sincroniza automático com o app de tablet [**arion**](https://github.com/mateusvpassos/arion).
 
 A ideia: configurar tudo no PC com teclado, salvar, e abrir pronto no tablet.
 
@@ -19,7 +19,7 @@ A ideia: configurar tudo no PC com teclado, salvar, e abrir pronto no tablet.
 - **Mesmo visual e recursos do app**: tela da música (tom, capo, fonte, só letra, rolagem com velocidade por música), repertório com filtro por tags e "tocada há X", imprimir/PDF no tom do repertório e TXT de letras
 - **Grupo compartilhado (Firebase)**: dono, **sugestões** (aceitar/recusar vendo a diferença), **histórico de versões** e voltar versão, **permissões**, atividade recente, e **trazer do Drive** para o grupo
 - **Sem o grupo**: modo antigo — salva no Google Drive (pasta privada `appDataFolder`) e o tablet mescla
-- Testar contra o emulador local do Firebase: `npm run dev:emu` (porta 4174; emulador em `mymusic/firebase`, `npm run emu`)
+- Testar contra o emulador local do Firebase: `npm run dev:emu` (porta 4174; emulador em `arion/firebase`, `npm run emu`)
 
 > O motor de cifras é uma **porta fiel** do app Flutter (`src/chordEngine.ts`), gerando o **mesmo formato JSON** — por isso web e tablet leem o mesmo arquivo.
 
@@ -56,7 +56,7 @@ npm run build    # gera dist/
 Web e tablet usam o **mesmo projeto Google Cloud**, então compartilham o mesmo `appDataFolder` do Drive:
 
 ```
-Editor Web  ──salva──►  Drive (mymusic_data.json)  ◄──baixa──  App Tablet
+Editor Web  ──salva──►  Drive (arion_data.json)  ◄──baixa──  App Tablet
 ```
 
 Cada save atualiza o `updatedAt`; **dos dois lados** o salvar baixa o que está no Drive, mescla (a versão mais recente vence) e só então sobe — um não apaga o que o outro acabou de gravar. Exclusões viajam como "lápides" (`deleted` no JSON), então música apagada não ressuscita no próximo sync. Config e histórico do app passam intactos pelo web.
@@ -94,4 +94,4 @@ src/
 
 ---
 
-<p align="center"><i>Companheiro web do app <a href="https://github.com/mateusvpassos/mymusic">mymusic</a>.</i></p>
+<p align="center"><i>Companheiro web do app <a href="https://github.com/mateusvpassos/arion">arion</a>.</i></p>

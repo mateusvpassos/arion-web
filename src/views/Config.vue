@@ -44,7 +44,7 @@ function exportar() {
   const blob = new Blob([JSON.stringify(dados, null, 1)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `mymusic-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `arion-backup-${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
@@ -144,7 +144,7 @@ async function importar(e: Event) {
         <button class="btn text" @click="abrir({ nome: 'atividade' })">Ver histórico</button>
       </section>
 
-      <p class="faint fim">MyMusic</p>
+      <p class="faint fim">Arion</p>
     </div>
   </div>
 </template>

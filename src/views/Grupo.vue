@@ -47,7 +47,7 @@ const criando = ref(false);
 
         <div v-if="cloud.liberado === false" class="card">
           <h3 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h3>
-          <p>Peça p/ alguém que já usa o MyMusic te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
+          <p>Peça p/ alguém que já usa o Arion te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
             Ao ser adicionado, o seu acesso é liberado.</p>
           <button class="btn" @click="conferirLiberacao()"><span class="ms">refresh</span>Já me adicionaram</button>
         </div>

@@ -97,7 +97,7 @@ const fecharMenu = () => (menu.value = null);
 
 <template>
   <div @click="fecharMenu">
-    <AppBar titulo="MyMusic" sem-voltar>
+    <AppBar titulo="Arion" sem-voltar>
       <template #logo><img src="/icon.png" class="logo" alt="" /></template>
       <!-- grupo em uso; clicar abre a lista de grupos -->
       <template v-if="cloud.grupo" #sub>
@@ -138,7 +138,7 @@ const fecharMenu = () => (menu.value = null);
       </template>
       <template v-else-if="cloud.liberado === false">
         <h2 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h2>
-        <p>Peça p/ alguém que já usa o MyMusic te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
+        <p>Peça p/ alguém que já usa o Arion te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
           Ao ser adicionado, o seu acesso é liberado.</p>
         <div class="acoes-entrar">
           <button class="btn" @click="conferirLiberacao()"><span class="ms">refresh</span>Já me adicionaram</button>

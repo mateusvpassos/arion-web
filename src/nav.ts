@@ -46,9 +46,19 @@ window.addEventListener('popstate', () => {
 
 // ---------- preferências deste navegador ----------
 
+// antes do nome Arion as chaves eram "mymusic.*": copia uma vez p/ "arion.*"
+try {
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i)!;
+    if (!k.startsWith('mymusic.')) continue;
+    const novo = 'arion.' + k.slice('mymusic.'.length);
+    if (localStorage.getItem(novo) === null) localStorage.setItem(novo, localStorage.getItem(k)!);
+  }
+} catch { /* sem storage */ }
+
 function ler<T>(k: string, padrao: T): T {
   try {
-    const v = localStorage.getItem('mymusic.' + k);
+    const v = localStorage.getItem('arion.' + k);
     return v === null ? padrao : (JSON.parse(v) as T);
   } catch { return padrao; }
 }
@@ -73,7 +83,7 @@ export const prefs = reactive({
 
 watch(prefs, (p) => {
   for (const [k, v] of Object.entries(p)) {
-    try { localStorage.setItem('mymusic.' + k, JSON.stringify(v)); } catch { /* sem storage */ }
+    try { localStorage.setItem('arion.' + k, JSON.stringify(v)); } catch { /* sem storage */ }
   }
   document.documentElement.dataset.theme = p.tema;
   aplicarTema(p.cor, p.tema);

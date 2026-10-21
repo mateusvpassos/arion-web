@@ -39,7 +39,7 @@ export interface Versao {
 const ts = (v: unknown): Date | null =>
   v && typeof (v as Timestamp).toDate === 'function' ? (v as Timestamp).toDate() : null;
 
-const PREF = 'mymusic.grupo';
+const PREF = 'arion.grupo';
 // cada aba lembra o grupo escolhido (preferência deste navegador)
 function lerPref(): string { try { return localStorage.getItem(PREF) ?? ''; } catch { return ''; } }
 function gravarPref(id: string) { try { localStorage.setItem(PREF, id); } catch { /* sem storage */ } }

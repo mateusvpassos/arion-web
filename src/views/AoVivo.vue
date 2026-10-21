@@ -9,12 +9,12 @@ import type { Modo } from '../live';
 import * as be from '../backend';
 
 function ultima() {
-  try { return localStorage.getItem('mymusic.ultimaSessao') ?? ''; } catch { return ''; }
+  try { return localStorage.getItem('arion.ultimaSessao') ?? ''; } catch { return ''; }
 }
 const endereco = ref(ultima());
 async function conectar() {
   if (await entrar(endereco.value)) {
-    try { localStorage.setItem('mymusic.ultimaSessao', endereco.value.trim()); } catch { /* sem storage */ }
+    try { localStorage.setItem('arion.ultimaSessao', endereco.value.trim()); } catch { /* sem storage */ }
     // já tem música aberta lá: abre aqui também
     const n = live.nav;
     if (n && live.modo === 'segue' && (be.songById(n.songId) || live.songs[n.songId]))
@@ -37,7 +37,7 @@ meuNome();
       <template v-if="!live.ativo">
         <div class="card">
           <h3 class="section-title"><span class="ms">cell_tower</span>Entrar numa sessão</h3>
-          <p class="muted">Crie a sessão no tablet ou celular (MyMusic → <b>Ao vivo</b> → Criar sessão) e
+          <p class="muted">Crie a sessão no tablet ou celular (Arion → <b>Ao vivo</b> → Criar sessão) e
             digite aqui o <b>código</b> que aparece lá. Este computador precisa estar na mesma rede (Wi-Fi).</p>
           <form class="linha" @submit.prevent="conectar">
             <input v-model="endereco" placeholder="Código (ex.: 4821) ou endereço" inputmode="decimal" class="grow" autofocus />
