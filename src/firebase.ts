@@ -1,5 +1,5 @@
 // Liga o Firebase: projeto de verdade (firebaseConfig abaixo) ou, nos
-// testes, o emulador local (VITE_MYMUSIC_EMU=127.0.0.1 npm run dev).
+// testes, o emulador local (VITE_ARION_EMU=127.0.0.1 npm run dev).
 import { initializeApp, type FirebaseApp, type FirebaseOptions } from 'firebase/app';
 import { getAuth, connectAuthEmulator, type Auth } from 'firebase/auth';
 import {
@@ -21,7 +21,7 @@ const firebaseConfig: FirebaseOptions | null = {
   appId: '1:911820467893:web:cae4a90cb261cb9d8058fc',
 };
 
-const EMU = (import.meta.env.VITE_MYMUSIC_EMU as string | undefined) ?? '';
+const EMU = (import.meta.env.VITE_ARION_EMU as string | undefined) ?? '';
 export const emulador = EMU !== '';
 
 let app: FirebaseApp | null = null;
