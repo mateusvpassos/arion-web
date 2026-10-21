@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyMusic — Política de privacidade</title>
+    <link rel="icon" type="image/png" href="icon.png" />
+    <style>
+      :root { color-scheme: light dark; --fg: #1b1d24; --muted: #5b6070; --bg: #f7f8fa; --link: #1f8f4e; }
+      @media (prefers-color-scheme: dark) { :root { --fg: #e9eaf0; --muted: #a3a7b6; --bg: #0f1014; --link: #4ade80; } }
+      body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+      main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+      h1 { font-size: 26px; margin: 0 0 4px; }
+      h2 { font-size: 18px; margin: 28px 0 6px; }
+      p, li { color: var(--fg); }
+      .muted { color: var(--muted); }
+      a { color: var(--link); }
+      header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+      header img { width: 44px; height: 44px; border-radius: 10px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="icon.png" alt="" />
+        <div>
+          <h1>Política de privacidade</h1>
+          <div class="muted">MyMusic — cifras e repertórios · atualizada em 20/10/2026</div>
+        </div>
+      </header>
+
+      <p>
+        O MyMusic é um app pessoal e gratuito para guardar cifras, montar repertórios e tocar ao vivo
+        (Android, Windows e navegador). Esta página explica quais dados ele usa e para quê.
+      </p>
+
+      <h2>O que o app guarda</h2>
+      <ul>
+        <li><b>Da sua conta Google:</b> só o e-mail e o nome, para identificar quem é dono de cada música e
+          repertório e mostrar o seu nome para as pessoas dos seus grupos.</li>
+        <li><b>O que você cria:</b> músicas (letra, acordes, tom, anotações, tags), repertórios, grupos e
+          quem participa deles, sugestões de mudança e o histórico de versões.</li>
+        <li><b>No seu aparelho:</b> uma cópia das músicas e repertórios, para o app funcionar sem internet, e as
+          suas preferências (tema, tamanho da fonte, pedal).</li>
+      </ul>
+
+      <h2>Onde fica e quem vê</h2>
+      <ul>
+        <li>Os dados ficam no Google Firebase (Firestore e Authentication).</li>
+        <li>As músicas que você cria entram no <b>acervo geral</b>, que todas as pessoas que usam o app podem ver.
+          Elas continuam suas: os outros só podem sugerir mudanças.</li>
+        <li>Repertórios e grupos são vistos só pelas pessoas que fazem parte do grupo.</li>
+        <li>Se você usar a cópia de segurança no Google Drive, ela fica numa pasta privada do app na sua conta
+          (só o MyMusic acessa).</li>
+        <li>A busca de letra envia o nome da música para o <a href="https://lrclib.net">LRCLIB</a>; nenhum dado
+          seu vai junto.</li>
+      </ul>
+
+      <h2>O que o app não faz</h2>
+      <ul>
+        <li>Não vende nem compartilha os seus dados com ninguém.</li>
+        <li>Não mostra anúncios e não usa rastreamento ou análise de uso.</li>
+        <li>Não lê os seus arquivos do Google Drive, só a pasta privada do próprio app.</li>
+      </ul>
+
+      <h2>Apagar os seus dados</h2>
+      <p>
+        Você pode apagar as suas músicas e repertórios pelo próprio app. Para apagar tudo, inclusive a sua
+        conta e os grupos, mande um e-mail para
+        <a href="mailto:mviniciusdospassos@gmail.com">mviniciusdospassos@gmail.com</a> e eu apago em até 30 dias.
+        Também dá para tirar o acesso do MyMusic à sua conta Google em
+        <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.
+      </p>
+
+      <h2>Contato</h2>
+      <p>Dúvidas: <a href="mailto:mviniciusdospassos@gmail.com">mviniciusdospassos@gmail.com</a>.</p>
+
+      <p class="muted"><a href="./">Abrir o MyMusic</a></p>
+    </main>
+  </body>
+</html>
