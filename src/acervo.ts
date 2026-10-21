@@ -3,7 +3,7 @@
 // usa CÓPIAS, que guardam de onde vieram (baseId/baseRev).
 import { reactive, computed, watch } from 'vue';
 import {
-  collection, doc, getDocs, limit, onSnapshot, orderBy, query, serverTimestamp, setDoc,
+  collection, doc, getDocs, getDocsFromCache, limit, onSnapshot, orderBy, query, serverTimestamp, setDoc,
   updateDoc, where, writeBatch, type Unsubscribe,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -47,14 +47,17 @@ function lerSug(d: { id: string; data: () => Record<string, any> }): Sugestao {
   };
 }
 
-// liga/desliga com o login
-watch(eu, (email) => ligar(email), { immediate: true });
+// liga/desliga com o login; só p/ quem está liberado (as regras negam o resto)
+const quem = computed(() => (cloud.liberado === true ? eu.value : ''));
+watch(quem, (email) => ligar(email), { immediate: true });
 
 /** Reabre as leituras (ex.: regras publicadas depois de abrir a página). */
 export function religar() {
   acervo.erro = null;
-  ligar(eu.value);
+  ligar(quem.value);
 }
+
+let geracao = 0;
 
 function ligar(email: string) {
   subs.forEach((u) => u());
@@ -64,18 +67,7 @@ function ligar(email: string) {
   acervo.carregou = false;
   ultima.clear();
   if (!email || !db) return;
-  subs.push(onSnapshot(collection(db, 'acervo'), (q) => {
-    const m: Record<string, Song> = {};
-    for (const d of q.docs) {
-      if (d.data().apagada) continue;
-      const s = songFromRaw(d.data() as RawSong);
-      m[s.id] = s;
-      if (!d.metadata.hasPendingWrites) ultima.set(s.id, JSON.parse(JSON.stringify(s)));
-    }
-    acervo.musicas = m;
-    acervo.carregou = true;
-    acervo.erro = null;
-  }, falhou));
+  ouvirMusicas(++geracao);
   subs.push(onSnapshot(collection(db, 'confianca'), (q) => {
     acervo.confianca = Object.fromEntries(q.docs.map((d) => [d.id, d.data().editores ?? []]));
   }, falhou));
@@ -97,7 +89,50 @@ function ligar(email: string) {
   setDoc(doc(db, 'pessoas', email), { nome: cloud.user?.nome ?? email, visto: serverTimestamp() }).catch(falhou);
 }
 
-export const ligado = computed(() => !!eu.value);
+/** Lê do cache do navegador o que já tinha e só pede ao servidor o que mudou
+ *  desde então (antes cada abertura lia o acervo inteiro: com muita gente
+ *  usando, isso gastava a cota diária do Firebase). */
+async function ouvirMusicas(g: number) {
+  const col = collection(db!, 'acervo');
+  const m: Record<string, Song> = {};
+  let desde = '';
+  try {
+    const cache = await getDocsFromCache(col);
+    if (g !== geracao) return;
+    for (const d of cache.docs) {
+      const j = d.data();
+      if ((j.updatedAt ?? '') > desde) desde = j.updatedAt;
+      if (j.apagada) continue;
+      const s = songFromRaw(j as RawSong);
+      m[s.id] = s;
+      ultima.set(s.id, JSON.parse(JSON.stringify(s)));
+    }
+    if (Object.keys(m).length) acervo.musicas = { ...m };
+  } catch { /* sem cache: lê tudo */ }
+  // margem de 2 dias: o updatedAt vem do relógio de cada aparelho
+  const t = desde ? new Date(desde) : null;
+  const corte = t && !isNaN(t.getTime()) ? new Date(t.getTime() - 2 * 864e5).toISOString() : '';
+  const q = corte ? query(col, where('updatedAt', '>', corte)) : col;
+  if (g !== geracao) return;
+  subs.push(onSnapshot(q, (snap) => {
+    for (const ch of snap.docChanges()) {
+      const j = ch.doc.data();
+      // na consulta "o que mudou", sair do filtro não é apagar
+      if (j.apagada || (ch.type === 'removed' && !corte)) { delete m[ch.doc.id]; continue; }
+      if (ch.type === 'removed') continue;
+      const s = songFromRaw(j as RawSong);
+      m[s.id] = s;
+      if (!ch.doc.metadata.hasPendingWrites) ultima.set(s.id, JSON.parse(JSON.stringify(s)));
+    }
+    acervo.musicas = { ...m };
+    acervo.carregou = true;
+    acervo.erro = null;
+  }, falhou));
+}
+
+export const ligado = computed(() => !!eu.value && cloud.liberado === true);
+/** entrou com o Google mas ainda não foi liberado p/ usar a nuvem */
+export const esperandoLiberacao = computed(() => !!eu.value && cloud.liberado === false);
 
 // ---------------- obras e versões ----------------
 

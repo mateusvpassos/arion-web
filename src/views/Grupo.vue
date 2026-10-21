@@ -3,7 +3,9 @@
 import { ref } from 'vue';
 import AppBar from '../components/AppBar.vue';
 import Prompt from '../components/Prompt.vue';
-import { cloud, eu, nomeDe, entrar, sair, criarGrupo, disponivel, entrarTeste, ehMinha, nomeDoGrupo } from '../cloud';
+import {
+  cloud, eu, nomeDe, entrar, sair, criarGrupo, disponivel, entrarTeste, ehMinha, nomeDoGrupo, conferirLiberacao,
+} from '../cloud';
 import { emulador } from '../firebase';
 import { abrir } from '../nav';
 
@@ -43,7 +45,14 @@ const criando = ref(false);
           <button class="btn text" @click="sair">Sair</button>
         </div>
 
-        <p v-if="!cloud.grupos.length" class="muted">Preparando a sua biblioteca…</p>
+        <div v-if="cloud.liberado === false" class="card">
+          <h3 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h3>
+          <p>Peça p/ alguém que já usa o MyMusic te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
+            Ao ser adicionado, o seu acesso é liberado.</p>
+          <button class="btn" @click="conferirLiberacao()"><span class="ms">refresh</span>Já me adicionaram</button>
+        </div>
+
+        <p v-else-if="!cloud.grupos.length" class="muted">Preparando a sua biblioteca…</p>
 
         <div v-else class="card">
           <h3 class="section-title"><span class="ms">groups</span>Seus grupos</h3>

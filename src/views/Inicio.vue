@@ -5,7 +5,7 @@ import AppBar from '../components/AppBar.vue';
 import Prompt from '../components/Prompt.vue';
 import { abrir, prefs } from '../nav';
 import * as be from '../backend';
-import { cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo } from '../cloud';
+import { cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, conferirLiberacao } from '../cloud';
 import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
 } from '../acervo';
@@ -134,6 +134,14 @@ const fecharMenu = () => (menu.value = null);
           <button class="btn" @click="disponivel && (emulador ? abrir({ nome: 'grupo' }) : entrar())">
             <span class="ms">account_circle</span>Entrar com Google
           </button>
+        </div>
+      </template>
+      <template v-else-if="cloud.liberado === false">
+        <h2 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h2>
+        <p>Peça p/ alguém que já usa o MyMusic te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
+          Ao ser adicionado, o seu acesso é liberado.</p>
+        <div class="acoes-entrar">
+          <button class="btn" @click="conferirLiberacao()"><span class="ms">refresh</span>Já me adicionaram</button>
         </div>
       </template>
       <p v-else class="muted">Carregando a sua biblioteca…</p>

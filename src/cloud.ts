@@ -6,7 +6,7 @@ import {
   type User,
 } from 'firebase/auth';
 import {
-  arrayRemove, arrayUnion, collection, doc, getDocs, limit, onSnapshot, orderBy, query,
+  arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query,
   serverTimestamp, setDoc, updateDoc, where, writeBatch, type Timestamp, type Unsubscribe,
 } from 'firebase/firestore';
 import { auth, db, disponivel } from './firebase';
@@ -56,6 +56,8 @@ export const cloud = reactive({
   sugestoes: [] as Sugestao[],
   carregou: false,
   erro: null as string | null,
+  /** pode usar a nuvem? null = ainda conferindo (ou sem internet na 1ª vez) */
+  liberado: null as boolean | null,
 });
 
 export const ativa = computed(() => !!cloud.user && !!cloud.grupo);
@@ -83,12 +85,34 @@ function falhou(e: unknown) {
 // ---------------- login ----------------
 
 if (auth) {
-  onAuthStateChanged(auth, (u: User | null) => {
+  onAuthStateChanged(auth, async (u: User | null) => {
     cloud.user = u?.email
       ? { email: u.email.toLowerCase(), nome: u.displayName || u.email.split('@')[0] }
       : null;
+    await conferirLiberacao(false);
     ouvirGrupos();
   });
+}
+
+// ---------------- liberação ----------------
+// O login Google é aberto a qualquer conta, mas as regras do Firestore só
+// deixam usar a nuvem quem está em liberados/{email} (senão qualquer um
+// gastaria a cota do projeto). Convidar p/ um grupo libera a pessoa.
+
+/** dono do app: liberado sem precisar de ninguém (igual a admin() nas regras) */
+const ADMINS = new Set(['mviniciusdospassos@gmail.com']);
+
+/** "Já me adicionaram": confere de novo sem sair e entrar. */
+export async function conferirLiberacao(reabrir = true) {
+  cloud.liberado = null;
+  const e = cloud.user?.email;
+  if (!e || !db) return;
+  if (ADMINS.has(e)) cloud.liberado = true;
+  else {
+    try { cloud.liberado = (await getDoc(doc(db, 'liberados', e))).exists(); }
+    catch { cloud.liberado = null; }
+  }
+  if (reabrir) ouvirGrupos();
 }
 
 export async function entrar() {
@@ -133,7 +157,7 @@ function ouvirGrupos() {
       // grupo recém-criado ainda não confirmado: abrir já daria "sem permissão"
       if (q.metadata.hasPendingWrites) return;
       // sem grupo nenhum (confirmado pelo servidor): cria a biblioteca pessoal
-      if (!q.docs.length && !q.metadata.fromCache && !criando) {
+      if (!q.docs.length && !q.metadata.fromCache && !criando && cloud.liberado === true) {
         criando = true;
         criarGrupo(`Biblioteca de ${cloud.user!.nome}`, true).finally(() => { criando = false; });
         return;
@@ -210,6 +234,8 @@ export function apagarGrupo(g: Grupo) {
 export async function convidar(email: string, g: Grupo | null = cloud.grupo) {
   const e = email.trim().toLowerCase();
   if (!g || !e || g.membros.includes(e)) return;
+  // convidar libera a pessoa p/ usar a nuvem (ver "liberação")
+  setDoc(doc(db!, 'liberados', e), { por: eu.value, em: serverTimestamp() }).catch(falhou);
   updateDoc(refDe(g), { membros: arrayUnion(e) }).catch(falhou);
 }
 
