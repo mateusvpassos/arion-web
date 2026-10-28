@@ -145,6 +145,18 @@ export async function sair() {
   await signOut(auth);
 }
 
+/** Pede a exclusão da conta e de tudo dela na nuvem: o dono do app roda
+ *  firebase/excluir-contas.mjs (repo do app). Sai da conta. */
+export async function pedirExclusao(): Promise<boolean> {
+  if (!db || !cloud.user) return false;
+  cloud.erro = null;
+  try {
+    await setDoc(doc(db, 'exclusoes', eu.value), { em: serverTimestamp(), nome: cloud.user.nome });
+  } catch (e) { falhou(e); return false; }
+  await sair();
+  return true;
+}
+
 // ---------------- grupos ----------------
 
 function ouvirGrupos() {
