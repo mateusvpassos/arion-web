@@ -24,7 +24,7 @@ const agora = () => new Date().toISOString();
 /** Música nova ainda fora da lista — entra com salvarSong() ao confirmar. */
 export function rascunhoSong(): Song {
   return {
-    id: uid(), title: 'Nova música', artist: '', key: 'C', capo: 0,
+    id: uid(), title: '', artist: '', key: 'C', capo: 0,
     sections: [], tags: [], notes: '', bpm: 0, scrollSpeed: 0,
     tempos: [], momentos: [], versao: 0, obra: '', nomeVersao: '', baseId: '', baseRev: 0,
     ...emptyMeta(), updatedAt: agora(),

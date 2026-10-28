@@ -294,12 +294,12 @@ function enviar(nota: string) {
   <div v-else @click="menuSec = null">
     <AppBar :titulo="sugestao ? 'Sugerir mudança' : props.nova ? 'Nova música' : 'Editar'"
       :sub="props.acervo && origem ? `Acervo — ${rotulo(origem)}` : ''">
-      <button class="icon-btn" title="Desfazer" :disabled="!historico.length" @click="desfazer"><span class="ms">undo</span></button>
-      <button class="icon-btn" title="Buscar letra" @click="abrirBuscaLetra"><span class="ms">lyrics</span></button>
-      <button class="icon-btn" title="Copiar como texto" @click="copiar"><span class="ms">content_copy</span></button>
+      <button class="icon-btn" title="Desfazer" aria-label="Desfazer" :disabled="!historico.length" @click="desfazer"><span aria-hidden="true" class="ms">undo</span></button>
+      <button class="icon-btn" title="Buscar letra" aria-label="Buscar letra" @click="abrirBuscaLetra"><span aria-hidden="true" class="ms">lyrics</span></button>
+      <button class="icon-btn" title="Copiar como texto" aria-label="Copiar como texto" @click="copiar"><span aria-hidden="true" class="ms">content_copy</span></button>
       <button class="btn text" @click="voltar">Cancelar</button>
       <button class="btn" @click="salvar">
-        <span class="ms">{{ sugestao ? 'outgoing_mail' : 'check' }}</span>{{ sugestao ? 'Enviar sugestão' : 'Salvar' }}
+        <span aria-hidden="true" class="ms">{{ sugestao ? 'outgoing_mail' : 'check' }}</span>{{ sugestao ? 'Enviar sugestão' : 'Salvar' }}
       </button>
     </AppBar>
     <div class="wrap">
@@ -310,18 +310,21 @@ function enviar(nota: string) {
       <div v-if="enviado" class="banner ok">Sugestão enviada — {{ nomeDe(origem!.dono) }} decide se aceita.</div>
       <p v-if="aviso" class="okt">{{ aviso }}</p>
 
-      <input v-model="s.title" class="titulo" placeholder="Título" />
+      <input v-model="s.title" class="titulo" placeholder="Título da música" :autofocus="props.nova" />
       <div class="linha">
         <input v-model="s.artist" placeholder="Artista" class="grow" />
         <label class="mini">Tom<input v-model="s.key" /></label>
-        <label class="mini">Capo<input v-model.number="s.capo" type="number" min="0" /></label>
-        <label class="mini">BPM<input v-model.number="s.bpm" type="number" min="0" /></label>
+        <!-- 0 = sem capo / sem BPM: campo vazio em vez de "0" -->
+        <label class="mini">Capo<input :value="s.capo || ''" type="number" min="0" placeholder="—"
+          @input="s.capo = Number(($event.target as HTMLInputElement).value) || 0" /></label>
+        <label class="mini">BPM<input :value="s.bpm || ''" type="number" min="0" placeholder="—"
+          @input="s.bpm = Number(($event.target as HTMLInputElement).value) || 0" /></label>
         <button class="btn outlined tap" title="Toque no ritmo da música" @click="tapTempo">
-          <span class="ms">touch_app</span>Tap tempo</button>
+          <span aria-hidden="true" class="ms">touch_app</span>Tap tempo</button>
       </div>
       <div class="chips tags">
         <button v-for="t in s.tags" :key="t" class="chip" @click="s.tags = s.tags.filter((x) => x !== t)">
-          {{ t }}<span class="ms">close</span>
+          {{ t }}<span aria-hidden="true" class="ms">close</span>
         </button>
         <input v-model="tag" placeholder="+ tag" class="tag-in" @keyup.enter="addTag" @blur="addTag" />
       </div>
@@ -330,9 +333,9 @@ function enviar(nota: string) {
 
       <div class="modos">
         <button class="seg" :class="{ on: modo === 'acordes' }" @click="setModo('acordes')">
-          <span class="ms">piano</span>Acordes</button>
+          <span aria-hidden="true" class="ms">piano</span>Acordes</button>
         <button class="seg" :class="{ on: modo === 'texto' }" @click="setModo('texto')">
-          <span class="ms">notes</span>Texto</button>
+          <span aria-hidden="true" class="ms">notes</span>Texto</button>
       </div>
 
       <template v-if="modo === 'texto'">
@@ -359,16 +362,16 @@ function enviar(nota: string) {
         <div v-for="(sec, si) in secs" :key="si" class="card secao">
           <div class="sec-topo">
             <button class="sec-nome" @click="renomear = si">{{ sec.name ? sec.name.toUpperCase() : '(sem nome)' }}</button>
-            <button class="icon-btn" title="Subir" :disabled="si === 0" @click="moverSecao(si, -1)"><span class="ms">arrow_upward</span></button>
-            <button class="icon-btn" title="Descer" :disabled="si === secs.length - 1" @click="moverSecao(si, 1)"><span class="ms">arrow_downward</span></button>
+            <button class="icon-btn" title="Subir" aria-label="Subir" :disabled="si === 0" @click="moverSecao(si, -1)"><span aria-hidden="true" class="ms">arrow_upward</span></button>
+            <button class="icon-btn" title="Descer" aria-label="Descer" :disabled="si === secs.length - 1" @click="moverSecao(si, 1)"><span aria-hidden="true" class="ms">arrow_downward</span></button>
             <div class="menu-wrap">
-              <button class="icon-btn" title="Mais" @click.stop="menuSec = menuSec === si ? null : si"><span class="ms">more_vert</span></button>
+              <button class="icon-btn" title="Mais" aria-label="Mais" @click.stop="menuSec = menuSec === si ? null : si"><span aria-hidden="true" class="ms">more_vert</span></button>
               <div v-if="menuSec === si" class="menu" @click.stop="menuSec = null">
-                <button @click="renomear = si"><span class="ms">edit</span>Renomear</button>
+                <button @click="renomear = si"><span aria-hidden="true" class="ms">edit</span>Renomear</button>
                 <button v-if="secs.some((x, i) => i !== si && temAcordes(x))" @click="copiandoPara = si">
-                  <span class="ms">format_paint</span>Copiar acordes de outra parte</button>
-                <button @click="duplicarSecao(si)"><span class="ms">content_copy</span>Duplicar</button>
-                <button @click="apagarSecao(si)"><span class="ms">delete</span>Excluir</button>
+                  <span aria-hidden="true" class="ms">format_paint</span>Copiar acordes de outra parte</button>
+                <button @click="duplicarSecao(si)"><span aria-hidden="true" class="ms">content_copy</span>Duplicar</button>
+                <button @click="apagarSecao(si)"><span aria-hidden="true" class="ms">delete</span>Excluir</button>
               </div>
             </div>
           </div>
@@ -385,16 +388,16 @@ function enviar(nota: string) {
               :style="{ width: `max(100%, ${l.lyric.length + 2}ch)` }" :readonly="!!armado" @input="mudouLetra" />
           </div>
           <button class="btn text" @click="sec.lines.push({ lyric: '', chords: [] }); mudou()">
-            <span class="ms">add</span>linha</button>
+            <span aria-hidden="true" class="ms">add</span>linha</button>
         </div>
-        <button class="btn tonal" @click="novaSecao"><span class="ms">add</span>Adicionar seção</button>
+        <button class="btn tonal" @click="novaSecao"><span aria-hidden="true" class="ms">add</span>Adicionar seção</button>
 
         <div class="paleta">
           <span class="plbl">Acordes</span>
           <div class="pchips">
             <button v-for="c in paleta" :key="c" class="chip pc" :class="{ on: armado === c, tom: doTom.has(c) }" draggable="true"
               @dragstart="pegar($event, { sym: c })" @click="armado = armado === c ? '' : c">{{ c }}</button>
-            <button class="chip" title="Outro acorde" @click="novoAcorde = true"><span class="ms">add</span></button>
+            <button class="chip" title="Outro acorde" @click="novoAcorde = true"><span aria-hidden="true" class="ms">add</span></button>
           </div>
           <button v-if="armado" class="btn text" @click="armado = ''">Soltar {{ armado }}</button>
         </div>
@@ -427,7 +430,7 @@ function enviar(nota: string) {
           <h3>Buscar letra</h3>
           <form class="linha" @submit.prevent="procurarLetra">
             <input v-model="termoLetra" class="grow" autofocus placeholder="Nome da música (e o artista, se souber)" />
-            <button class="btn"><span class="ms">search</span>Buscar</button>
+            <button class="btn"><span aria-hidden="true" class="ms">search</span>Buscar</button>
           </form>
           <p v-if="carregandoLetra" class="faint">Buscando…</p>
           <p v-if="erroLetra" class="error">{{ erroLetra }}</p>
@@ -445,7 +448,7 @@ function enviar(nota: string) {
     <Prompt v-if="novoAcorde" titulo="Acorde" dica="Ex.: F#m7" ok="Usar" @fechar="novoAcorde = false" @ok="addExtra" />
     <Prompt v-if="editando" titulo="Editar acorde" ok="OK"
       :valor="secs[editando.si].lines[editando.li].chords[editando.ci]?.sym" @fechar="editando = null" @ok="salvarAcorde">
-      <button type="button" class="btn danger del" @click="apagarAcorde"><span class="ms">delete</span>Excluir</button>
+      <button type="button" class="btn danger del" @click="apagarAcorde"><span aria-hidden="true" class="ms">delete</span>Excluir</button>
     </Prompt>
     <Prompt v-if="renomear !== null" titulo="Nome da seção" ok="OK" :valor="secs[renomear]?.name"
       @fechar="renomear = null" @ok="nomeSecao" />

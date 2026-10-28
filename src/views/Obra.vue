@@ -37,15 +37,15 @@ function puxarAqui() {
   <div v-if="!v" class="empty">Música não encontrada</div>
   <div v-else>
     <AppBar :titulo="v.title" :sub="`${rotulo(v)}  •  ${v.key}  •  de ${nomeDe(v.dono)}  •  revisão ${v.versao}`">
-      <button class="icon-btn" title="Histórico de revisões" @click="abrir({ nome: 'versoes', id: v.id, acervo: true })">
-        <span class="ms">history</span>
+      <button class="icon-btn" title="Histórico de revisões" aria-label="Histórico de revisões" @click="abrir({ nome: 'versoes', id: v.id, acervo: true })">
+        <span aria-hidden="true" class="ms">history</span>
       </button>
-      <button class="icon-btn" title="Dono e quem pode editar" @click="perm = true">
-        <span class="ms">manage_accounts</span>
+      <button class="icon-btn" title="Dono e quem pode editar" aria-label="Dono e quem pode editar" @click="perm = true">
+        <span aria-hidden="true" class="ms">manage_accounts</span>
       </button>
-      <button class="icon-btn" :title="podeEditarA(v) ? 'Editar esta versão' : 'Sugerir mudança'"
+      <button class="icon-btn" :title="podeEditarA(v) ? 'Editar esta versão' : 'Sugerir mudança'" :aria-label="podeEditarA(v) ? 'Editar esta versão' : 'Sugerir mudança'"
         @click="abrir({ nome: 'editar', id: v.id, acervo: true })">
-        <span class="ms">{{ podeEditarA(v) ? 'edit' : 'rate_review' }}</span>
+        <span aria-hidden="true" class="ms">{{ podeEditarA(v) ? 'edit' : 'rate_review' }}</span>
       </button>
     </AppBar>
     <div class="wrap">
@@ -53,7 +53,7 @@ function puxarAqui() {
         <button v-for="x in vs" :key="x.id" class="chip" :class="{ on: x.id === v.id }" @click="sel = x.id">
           <span v-if="x.id === v.id" class="ms">check</span>{{ rotulo(x) }} · {{ nomeDe(x.dono) }}
         </button>
-        <button class="chip" @click="nova = true"><span class="ms">add</span>Nova versão</button>
+        <button class="chip" @click="nova = true"><span aria-hidden="true" class="ms">add</span>Nova versão</button>
       </div>
       <p v-if="v.notes"><i>{{ v.notes }}</i></p>
       <ChordChart :song="v" :fonte="prefs.fonte" :letra="prefs.soLetra" />
@@ -61,10 +61,10 @@ function puxarAqui() {
     <footer class="rodape no-print">
       <p v-if="aviso" class="ok">{{ aviso }}</p>
       <button v-if="copia" class="btn outlined" @click="abrir({ nome: 'musica', id: copia.id })">
-        <span class="ms">library_music</span>{{ ativa ? 'Abrir a cópia do grupo' : 'Abrir na biblioteca' }}
+        <span aria-hidden="true" class="ms">library_music</span>{{ ativa ? 'Abrir a cópia do grupo' : 'Abrir na biblioteca' }}
       </button>
       <button v-else-if="be.pronto.value" class="btn" @click="puxarAqui">
-        <span class="ms">library_add</span>
+        <span aria-hidden="true" class="ms">library_add</span>
         {{ ativa ? `Puxar esta versão para o grupo ${cloud.grupo!.nome}` : 'Puxar esta versão para a biblioteca' }}
       </button>
     </footer>

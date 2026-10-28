@@ -28,7 +28,7 @@ const aba = ref<'decidir' | 'minhas'>(paraDecidir.value.length || !minhas.value.
       <ul class="list">
         <li v-for="x in (aba === 'decidir' ? paraDecidir : minhas)" :key="x.id" class="row"
           @click="abrir({ nome: 'sugestao', id: x.id })">
-          <span class="ms fill" :style="{ color: statusIcone(x.status).cor }">{{ statusIcone(x.status).ic }}</span>
+          <span aria-hidden="true" class="ms fill" :style="{ color: statusIcone(x.status).cor }">{{ statusIcone(x.status).ic }}</span>
           <div class="grow">
             <div class="title">{{ x.acervo ? 'Acervo · ' : '' }}{{ x.titulo }}</div>
             <div class="sub">
@@ -36,7 +36,7 @@ const aba = ref<'decidir' | 'minhas'>(paraDecidir.value.length || !minhas.value.
                   x.status !== 'pendente' ? statusTexto(x) : '', x.nota ? `“${x.nota}”` : ''].filter(Boolean).join('  •  ') }}
             </div>
           </div>
-          <span class="ms faint">chevron_right</span>
+          <span aria-hidden="true" class="ms faint">chevron_right</span>
         </li>
         <li v-if="!(aba === 'decidir' ? paraDecidir : minhas).length" class="empty">
           {{ aba === 'decidir' ? 'Nenhuma sugestão esperando você.' : 'Você ainda não sugeriu nada.' }}

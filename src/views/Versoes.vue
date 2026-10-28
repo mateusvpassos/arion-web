@@ -40,7 +40,7 @@ function confirmar() {
     <AppBar :titulo="sel ? `Revisão ${sel.n}` : `Histórico — ${song?.title ?? ''}`"
       :sub="props.acervo && song ? `Acervo — ${rotulo(song)}` : ''">
       <button v-if="sel" class="btn text" @click="sel = null">Lista</button>
-      <button v-else class="icon-btn" title="Atualizar" @click="carregar"><span class="ms">refresh</span></button>
+      <button v-else class="icon-btn" title="Atualizar" aria-label="Atualizar" @click="carregar"><span aria-hidden="true" class="ms">refresh</span></button>
     </AppBar>
     <div class="wrap">
       <p v-if="erro" class="error">{{ erro }}</p>
@@ -76,7 +76,7 @@ function confirmar() {
         </template>
         <div v-else class="card"><ChordChart :song="sel.song" :fonte="0.9" /></div>
         <button v-if="song && song.versao !== sel.n" class="btn grande" @click="confirma = true">
-          <span class="ms">{{ pode ? 'restore' : 'outgoing_mail' }}</span>
+          <span aria-hidden="true" class="ms">{{ pode ? 'restore' : 'outgoing_mail' }}</span>
           {{ pode ? 'Voltar para esta revisão' : 'Sugerir voltar para esta revisão' }}
         </button>
       </template>

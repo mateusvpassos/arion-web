@@ -254,52 +254,51 @@ const sub = computed(() => {
   <div v-else class="tela" :class="{ cheia }" @click="exportar = false">
     <AppBar v-if="!cheia" :titulo="song.title" :sub="sub">
       <div class="menu-wrap">
-        <button class="icon-btn" title="Exportar" @click.stop="exportar = !exportar"><span class="ms">ios_share</span></button>
+        <button class="icon-btn" title="Exportar" aria-label="Exportar" @click.stop="exportar = !exportar"><span aria-hidden="true" class="ms">ios_share</span></button>
         <div v-if="exportar" class="menu" @click.stop>
-          <button @click="exporta('pdf')"><span class="ms">print</span>PDF / Imprimir</button>
-          <button @click="exporta('docx')"><span class="ms">description</span>Word (.docx)</button>
-          <button @click="exporta('img')"><span class="ms">image</span>Imagem (PNG)</button>
+          <button @click="exporta('pdf')"><span aria-hidden="true" class="ms">print</span>PDF / Imprimir</button>
+          <button @click="exporta('docx')"><span aria-hidden="true" class="ms">description</span>Word (.docx)</button>
+          <button @click="exporta('img')"><span aria-hidden="true" class="ms">image</span>Imagem (PNG)</button>
         </div>
       </div>
-      <button class="icon-btn" title="Tela cheia" @click="toggleCheia"><span class="ms">fullscreen</span></button>
       <template v-if="doAcervo">
-        <button class="icon-btn" title="Adicionar às minhas músicas" @click="adicionarMinhas">
-          <span class="ms">library_add</span></button>
-        <button class="icon-btn" :title="(obras[obraDe(song)]?.length ?? 1) > 1 ? 'Ver versões' : 'Versões e detalhes'"
-          @click="abrir({ nome: 'obra', obra: obraDe(song), versaoId: song.id })"><span class="ms">layers</span></button>
-        <button class="icon-btn" title="Histórico de revisões" @click="abrir({ nome: 'versoes', id: song.id, acervo: true })">
-          <span class="ms">history</span></button>
-        <button class="icon-btn" :title="podeEditarA(song) ? 'Editar' : 'Sugerir mudança'"
+        <button class="icon-btn" title="Adicionar às minhas músicas" aria-label="Adicionar às minhas músicas" @click="adicionarMinhas">
+          <span aria-hidden="true" class="ms">library_add</span></button>
+        <button class="icon-btn" :title="(obras[obraDe(song)]?.length ?? 1) > 1 ? 'Ver versões' : 'Versões e detalhes'" :aria-label="(obras[obraDe(song)]?.length ?? 1) > 1 ? 'Ver versões' : 'Versões e detalhes'"
+          @click="abrir({ nome: 'obra', obra: obraDe(song), versaoId: song.id })"><span aria-hidden="true" class="ms">layers</span></button>
+        <button class="icon-btn" title="Histórico de revisões" aria-label="Histórico de revisões" @click="abrir({ nome: 'versoes', id: song.id, acervo: true })">
+          <span aria-hidden="true" class="ms">history</span></button>
+        <button class="icon-btn" :title="podeEditarA(song) ? 'Editar' : 'Sugerir mudança'" :aria-label="podeEditarA(song) ? 'Editar' : 'Sugerir mudança'"
           @click="abrir({ nome: 'editar', id: song.id, acervo: true })">
-          <span class="ms">{{ podeEditarA(song) ? 'edit' : 'rate_review' }}</span></button>
+          <span aria-hidden="true" class="ms">{{ podeEditarA(song) ? 'edit' : 'rate_review' }}</span></button>
       </template>
-      <button v-else-if="origem" class="icon-btn" :title="`Ver no acervo (${rotulo(origem)} de ${nomeA(origem.dono)})`"
-        @click="abrir({ nome: 'obra', obra: obraDe(origem), versaoId: origem.id })"><span class="ms">public</span></button>
-      <button v-else-if="cloud.user && minha && doGrupo" class="icon-btn" title="Publicar no acervo geral"
-        @click="publicar(song); avisar('Publicada no acervo geral')"><span class="ms">publish</span></button>
-      <button v-if="diferente" class="icon-btn" title="Publicar como nova versão no acervo" @click="nomeNova = true">
-        <span class="ms">library_add</span></button>
+      <button v-else-if="origem" class="icon-btn" :title="`Ver no acervo (${rotulo(origem)} de ${nomeA(origem.dono)})`" :aria-label="`Ver no acervo (${rotulo(origem)} de ${nomeA(origem.dono)})`"
+        @click="abrir({ nome: 'obra', obra: obraDe(origem), versaoId: origem.id })"><span aria-hidden="true" class="ms">public</span></button>
+      <button v-else-if="cloud.user && minha && doGrupo" class="icon-btn" title="Publicar no acervo geral" aria-label="Publicar no acervo geral"
+        @click="publicar(song); avisar('Publicada no acervo geral')"><span aria-hidden="true" class="ms">publish</span></button>
+      <button v-if="diferente" class="icon-btn" title="Publicar como nova versão no acervo" aria-label="Publicar como nova versão no acervo" @click="nomeNova = true">
+        <span aria-hidden="true" class="ms">library_add</span></button>
       <template v-if="ativa && doGrupo">
-        <button class="icon-btn" title="Histórico de revisões" @click="abrir({ nome: 'versoes', id: song.id })">
-          <span class="ms">history</span>
+        <button class="icon-btn" title="Histórico de revisões" aria-label="Histórico de revisões" @click="abrir({ nome: 'versoes', id: song.id })">
+          <span aria-hidden="true" class="ms">history</span>
         </button>
-        <button class="icon-btn" title="Dono e quem pode editar" @click="perm = true">
-          <span class="ms">manage_accounts</span>
+        <button class="icon-btn" title="Dono e quem pode editar" aria-label="Dono e quem pode editar" @click="perm = true">
+          <span aria-hidden="true" class="ms">manage_accounts</span>
         </button>
       </template>
-      <button v-if="doGrupo" class="icon-btn" :title="podeEditar ? 'Editar' : 'Sugerir mudança'"
+      <button v-if="doGrupo" class="icon-btn" :title="podeEditar ? 'Editar' : 'Sugerir mudança'" :aria-label="podeEditar ? 'Editar' : 'Sugerir mudança'"
         @click="abrir({ nome: 'editar', id: song.id })">
-        <span class="ms">{{ podeEditar ? 'edit' : 'rate_review' }}</span>
+        <span aria-hidden="true" class="ms">{{ podeEditar ? 'edit' : 'rate_review' }}</span>
       </button>
     </AppBar>
     <div v-else class="flutua no-print">
-      <button class="icon-btn" :class="{ on: prefs.soLetra }" title="Só letra" @click="prefs.soLetra = !prefs.soLetra">
-        <span class="ms">lyrics</span></button>
-      <button class="icon-btn" title="Fonte -" @click="prefs.fonte = Math.max(0.7, +(prefs.fonte - 0.1).toFixed(1))">
-        <span class="ms">text_decrease</span></button>
-      <button class="icon-btn" title="Fonte +" @click="prefs.fonte = Math.min(2.8, +(prefs.fonte + 0.1).toFixed(1))">
-        <span class="ms">text_increase</span></button>
-      <button class="icon-btn" title="Sair da tela cheia" @click="toggleCheia"><span class="ms">fullscreen_exit</span></button>
+      <button class="icon-btn" :class="{ on: prefs.soLetra }" title="Só letra" aria-label="Só letra" @click="prefs.soLetra = !prefs.soLetra">
+        <span aria-hidden="true" class="ms">lyrics</span></button>
+      <button class="icon-btn" title="Fonte -" aria-label="Fonte -" @click="prefs.fonte = Math.max(0.7, +(prefs.fonte - 0.1).toFixed(1))">
+        <span aria-hidden="true" class="ms">text_decrease</span></button>
+      <button class="icon-btn" title="Fonte +" aria-label="Fonte +" @click="prefs.fonte = Math.min(2.8, +(prefs.fonte + 0.1).toFixed(1))">
+        <span aria-hidden="true" class="ms">text_increase</span></button>
+      <button class="icon-btn" title="Sair da tela cheia" aria-label="Sair da tela cheia" @click="toggleCheia"><span aria-hidden="true" class="ms">fullscreen_exit</span></button>
     </div>
 
     <div v-if="!cheia && !prefs.soLetra && acordes.length" class="acordes no-print">
@@ -307,58 +306,58 @@ const sub = computed(() => {
     </div>
     <p v-if="live.aviso" class="aviso no-print">{{ live.aviso }}</p>
     <div v-if="!cheia && novidade && origem" class="banner novo no-print">
-      <span class="ms">new_releases</span>
+      <span aria-hidden="true" class="ms">new_releases</span>
       <span class="grow">A versão “{{ rotulo(origem) }}” mudou no acervo (revisão {{ origem.versao }}, por {{ nomeA(origem.por) }}).</span>
       <button class="btn text" @click="verDiff = !verDiff">{{ verDiff ? 'Esconder' : 'Ver o que mudou' }}</button>
       <button class="btn tonal" :disabled="!podeEditar" @click="atualizarDoAcervo(song); avisar('Atualizada com a versão do acervo')">Atualizar</button>
     </div>
     <div v-if="novidade && origem && verDiff" class="cifra"><DiffView :antes="song" :depois="origem" /></div>
     <p v-if="aviso" class="aviso no-print">{{ aviso }}</p>
-    <div v-if="!cheia && song.notes" class="nota"><span class="ms">sticky_note_2</span><i>{{ song.notes }}</i></div>
+    <div v-if="!cheia && song.notes" class="nota"><span aria-hidden="true" class="ms">sticky_note_2</span><i>{{ song.notes }}</i></div>
 
     <main class="cifra">
       <ChordChart :song="mostrada" :fonte="prefs.fonte" :letra="prefs.soLetra" />
     </main>
 
     <footer v-if="!cheia" class="barra no-print">
-      <button class="icon-btn" title="Música anterior" :disabled="idx <= 0" v-if="lista.length > 1" @click="ir(idx - 1)">
-        <span class="ms">skip_previous</span>
+      <button class="icon-btn" title="Música anterior" aria-label="Música anterior" :disabled="idx <= 0" v-if="lista.length > 1" @click="ir(idx - 1)">
+        <span aria-hidden="true" class="ms">skip_previous</span>
       </button>
-      <button class="icon-btn" title="Tom -" @click="setTom(tom - 1)"><span class="ms">remove</span></button>
-      <span class="lbl">Tom</span>
-      <button class="icon-btn" title="Tom +" @click="setTom(tom + 1)"><span class="ms">add</span></button>
-      <button class="icon-btn" title="Fonte -" @click="prefs.fonte = Math.max(0.7, +(prefs.fonte - 0.1).toFixed(1))">
-        <span class="ms">text_decrease</span>
+      <button class="icon-btn" title="Tom -" aria-label="Tom -" @click="setTom(tom - 1)"><span aria-hidden="true" class="ms">remove</span></button>
+      <span class="lbl" title="Tom em que a música está sendo mostrada">Tom {{ mostrada.key }}</span>
+      <button class="icon-btn" title="Tom +" aria-label="Tom +" @click="setTom(tom + 1)"><span aria-hidden="true" class="ms">add</span></button>
+      <button class="icon-btn" title="Fonte -" aria-label="Fonte -" @click="prefs.fonte = Math.max(0.7, +(prefs.fonte - 0.1).toFixed(1))">
+        <span aria-hidden="true" class="ms">text_decrease</span>
       </button>
-      <button class="icon-btn" title="Fonte +" @click="prefs.fonte = Math.min(2.8, +(prefs.fonte + 0.1).toFixed(1))">
-        <span class="ms">text_increase</span>
+      <button class="icon-btn" title="Fonte +" aria-label="Fonte +" @click="prefs.fonte = Math.min(2.8, +(prefs.fonte + 0.1).toFixed(1))">
+        <span aria-hidden="true" class="ms">text_increase</span>
       </button>
       <template v-if="podeEditar">
-        <button class="icon-btn" title="Capo -" :disabled="!song.capo" @click="setCapo(-1)"><span class="ms">south</span></button>
+        <button class="icon-btn" title="Capo -" aria-label="Capo -" :disabled="!song.capo" @click="setCapo(-1)"><span aria-hidden="true" class="ms">remove</span></button>
         <span class="lbl">Capo {{ song.capo }}</span>
-        <button class="icon-btn" title="Capo +" @click="setCapo(1)"><span class="ms">north</span></button>
+        <button class="icon-btn" title="Capo +" aria-label="Capo +" @click="setCapo(1)"><span aria-hidden="true" class="ms">add</span></button>
       </template>
-      <button v-if="song.capo" class="icon-btn" :class="{ on: comCapo }" title="Acordes com capo"
-        @click="comCapo = !comCapo"><span class="ms">album</span></button>
+      <button v-if="song.capo" class="icon-btn" :class="{ on: comCapo }" title="Acordes com capo" aria-label="Acordes com capo"
+        @click="comCapo = !comCapo"><span aria-hidden="true" class="ms">album</span></button>
       <button class="icon-btn" :class="{ on: prefs.soLetra }"
-        :title="prefs.soLetra ? 'Mostrar acordes' : 'Só letra (p/ quem canta)'"
-        @click="prefs.soLetra = !prefs.soLetra"><span class="ms">lyrics</span></button>
-      <button class="icon-btn play" :class="{ on: rolando }" title="Auto-rolagem" @click="rolando = !rolando">
-        <span class="ms fill">{{ rolando ? 'pause' : 'play_arrow' }}</span>
+        :title="prefs.soLetra ? 'Mostrar acordes' : 'Só letra (p/ quem canta)'" :aria-label="prefs.soLetra ? 'Mostrar acordes' : 'Só letra (p/ quem canta)'"
+        @click="prefs.soLetra = !prefs.soLetra"><span aria-hidden="true" class="ms">lyrics</span></button>
+      <button class="icon-btn play" :class="{ on: rolando }" title="Auto-rolagem" aria-label="Auto-rolagem" @click="rolando = !rolando">
+        <span aria-hidden="true" class="ms fill">{{ rolando ? 'pause' : 'play_arrow' }}</span>
       </button>
       <template v-if="rolando">
-        <button class="icon-btn" title="Mais devagar" @click="setVel(-4)"><span class="ms">fast_rewind</span></button>
+        <button class="icon-btn" title="Mais devagar" aria-label="Mais devagar" @click="setVel(-4)"><span aria-hidden="true" class="ms">fast_rewind</span></button>
         <span class="lbl vel" :title="song.scrollSpeed ? 'Velocidade desta música (clique p/ voltar à padrão)' : 'Velocidade padrão (das configurações)'"
           @click="velPadrao">
           {{ Math.round(velocidade) }}{{ song.scrollSpeed ? '' : '*' }}
         </span>
-        <button class="icon-btn" title="Mais rápido" @click="setVel(4)"><span class="ms">fast_forward</span></button>
+        <button class="icon-btn" title="Mais rápido" aria-label="Mais rápido" @click="setVel(4)"><span aria-hidden="true" class="ms">fast_forward</span></button>
       </template>
-      <button v-if="song.bpm" class="icon-btn" :class="{ on: metro }" :title="`Metrônomo ${song.bpm}`" @click="toggleMetro">
-        <span class="ms">av_timer</span></button>
-      <button class="icon-btn" title="Tela cheia" @click="toggleCheia"><span class="ms">fullscreen</span></button>
-      <button class="icon-btn" title="Próxima música" v-if="lista.length > 1" :disabled="idx >= lista.length - 1"
-        @click="ir(idx + 1)"><span class="ms">skip_next</span></button>
+      <button v-if="song.bpm" class="icon-btn" :class="{ on: metro }" :title="`Metrônomo ${song.bpm}`" :aria-label="`Metrônomo ${song.bpm}`" @click="toggleMetro">
+        <span aria-hidden="true" class="ms">av_timer</span></button>
+      <button class="icon-btn" title="Tela cheia" aria-label="Tela cheia" @click="toggleCheia"><span aria-hidden="true" class="ms">fullscreen</span></button>
+      <button class="icon-btn" title="Próxima música" aria-label="Próxima música" v-if="lista.length > 1" :disabled="idx >= lista.length - 1"
+        @click="ir(idx + 1)"><span aria-hidden="true" class="ms">skip_next</span></button>
     </footer>
 
     <div v-if="rolando" class="faixa no-print"></div>

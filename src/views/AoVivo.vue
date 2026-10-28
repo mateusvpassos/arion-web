@@ -36,13 +36,13 @@ meuNome();
     <div class="wrap">
       <template v-if="!live.ativo">
         <div class="card">
-          <h3 class="section-title"><span class="ms">cell_tower</span>Entrar numa sessão</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">cell_tower</span>Entrar numa sessão</h3>
           <p class="muted">Crie a sessão no tablet ou celular (Arion → <b>Ao vivo</b> → Criar sessão) e
             digite aqui o <b>código</b> que aparece lá. Este computador precisa estar na mesma rede (Wi-Fi).</p>
           <form class="linha" @submit.prevent="conectar">
             <input v-model="endereco" placeholder="Código (ex.: 4821) ou endereço" inputmode="decimal" class="grow" autofocus />
             <button class="btn" :disabled="live.conectando || !endereco.trim()">
-              <span class="ms">login</span>{{ live.conectando ? 'Conectando…' : 'Entrar' }}
+              <span aria-hidden="true" class="ms">login</span>{{ live.conectando ? 'Conectando…' : 'Entrar' }}
             </button>
           </form>
           <p v-if="live.erro" class="error">{{ live.erro }}</p>
@@ -54,18 +54,18 @@ meuNome();
         <div v-if="live.reconectando" class="banner">Conexão caiu — tentando voltar…</div>
         <p v-if="live.aviso" class="ok">{{ live.aviso }}</p>
         <div class="card">
-          <h3 class="section-title"><span class="ms">computer</span>Este navegador</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">computer</span>Este navegador</h3>
           <div class="modos">
             <button v-for="x in MODOS" :key="x.m" class="chip" :class="{ on: live.modo === x.m }" :title="x.dica"
-              @click="setModo(x.m)"><span class="ms">{{ x.icone }}</span>{{ x.nome }}</button>
+              @click="setModo(x.m)"><span aria-hidden="true" class="ms">{{ x.icone }}</span>{{ x.nome }}</button>
           </div>
           <p class="faint dica">{{ MODOS.find((x) => x.m === live.modo)!.dica }}</p>
         </div>
         <div class="card">
-          <h3 class="section-title"><span class="ms">devices</span>Aparelhos ({{ live.peers.length }})</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">devices</span>Aparelhos ({{ live.peers.length }})</h3>
           <ul class="list">
             <li v-for="p in live.peers" :key="p.id" class="peer">
-              <span class="ms">{{ ICONE[p.mode] }}</span>
+              <span aria-hidden="true" class="ms">{{ ICONE[p.mode] }}</span>
               <span class="grow">{{ p.name }}{{ p.name === prefs.aparelho ? ' (este)' : '' }}</span>
               <span class="faint">{{ p.mode === 'conduz' ? 'conduz' : p.mode === 'segue' ? 'segue' : 'livre' }}</span>
             </li>
@@ -74,8 +74,8 @@ meuNome();
         <div class="linha">
           <button v-if="live.nav && (be.songById(live.nav.songId) || live.songs[live.nav.songId])" class="btn tonal"
             @click="abrir({ nome: 'musica', id: live.nav.songId, setlistId: live.nav.setlistId ?? undefined })">
-            <span class="ms">music_note</span>Abrir a música atual</button>
-          <button class="btn danger" @click="sair"><span class="ms">logout</span>Sair da sessão</button>
+            <span aria-hidden="true" class="ms">music_note</span>Abrir a música atual</button>
+          <button class="btn danger" @click="sair"><span aria-hidden="true" class="ms">logout</span>Sair da sessão</button>
         </div>
       </template>
     </div>

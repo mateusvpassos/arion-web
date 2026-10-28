@@ -19,12 +19,12 @@ const itens = computed(() => [
       <ul class="list">
         <li v-for="x in itens" :key="x.tipo + x.id" class="row"
           @click="x.tipo === 'musica' ? abrir({ nome: 'versoes', id: x.id }) : abrir({ nome: 'repertorio', id: x.id })">
-          <span class="ms ic">{{ x.tipo === 'musica' ? 'music_note' : 'queue_music' }}</span>
+          <span aria-hidden="true" class="ms ic">{{ x.tipo === 'musica' ? 'music_note' : 'queue_music' }}</span>
           <div class="grow">
             <div class="title small">{{ x.t }}</div>
             <div class="sub">{{ x.por || '—' }} • {{ fmtQuando(x.em) }}{{ x.v ? ` • versão ${x.v}` : '' }}</div>
           </div>
-          <span class="ms faint">chevron_right</span>
+          <span aria-hidden="true" class="ms faint">chevron_right</span>
         </li>
         <li v-if="!itens.length" class="empty">Nada ainda.</li>
       </ul>

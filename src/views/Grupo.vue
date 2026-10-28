@@ -20,19 +20,19 @@ const base = import.meta.env.BASE_URL;
     <AppBar titulo="Grupos" />
     <div class="wrap">
       <div v-if="!disponivel" class="card">
-        <h3 class="section-title"><span class="ms">cloud_off</span>Nuvem ainda não configurada</h3>
+        <h3 class="section-title"><span aria-hidden="true" class="ms">cloud_off</span>Nuvem ainda não configurada</h3>
         <p>Falta configurar o Firebase.</p>
       </div>
 
       <div v-else-if="!cloud.user" class="card">
-        <h3 class="section-title"><span class="ms">login</span>Entrar</h3>
+        <h3 class="section-title"><span aria-hidden="true" class="ms">login</span>Entrar</h3>
         <p>Entre com a conta Google p/ ver o acervo e as suas músicas.</p>
         <form v-if="emulador" class="linha" @submit.prevent="entrarTeste(emailTeste, nomeTeste)">
           <input v-model="emailTeste" placeholder="E-mail (teste)" />
           <input v-model="nomeTeste" placeholder="Nome (teste)" />
           <button class="btn">Entrar (emulador)</button>
         </form>
-        <button v-else class="btn" @click="entrar"><span class="ms">account_circle</span>Entrar com Google</button>
+        <button v-else class="btn" @click="entrar"><span aria-hidden="true" class="ms">account_circle</span>Entrar com Google</button>
         <p class="faint small">
           Ao entrar você aceita os <a :href="`${base}termos.html`" target="_blank">termos de uso</a> e a
           <a :href="`${base}privacidade.html`" target="_blank">política de privacidade</a>.
@@ -51,22 +51,22 @@ const base = import.meta.env.BASE_URL;
         </div>
 
         <div v-if="cloud.liberado === false" class="card">
-          <h3 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">lock_clock</span>Acesso ainda não liberado</h3>
           <p>Peça p/ alguém que já usa o Arion te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
             Ao ser adicionado, o seu acesso é liberado.</p>
-          <button class="btn" @click="conferirLiberacao()"><span class="ms">refresh</span>Já me adicionaram</button>
+          <button class="btn" @click="conferirLiberacao()"><span aria-hidden="true" class="ms">refresh</span>Já me adicionaram</button>
         </div>
 
         <p v-else-if="!cloud.grupos.length" class="muted">Preparando a sua biblioteca…</p>
 
         <div v-else class="card">
-          <h3 class="section-title"><span class="ms">groups</span>Seus grupos</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">groups</span>Seus grupos</h3>
           <p class="faint small">
             Cada grupo tem as suas músicas, repertórios e pessoas. O que está em uso aparece na tela inicial.
           </p>
           <ul class="grupos">
             <li v-for="g in cloud.grupos" :key="g.id" @click="abrir({ nome: 'grupoDetalhe', id: g.id })">
-              <span class="ms">{{ ehMinha(g) ? 'person' : 'groups' }}</span>
+              <span aria-hidden="true" class="ms">{{ ehMinha(g) ? 'person' : 'groups' }}</span>
               <div class="grow">
                 <div>{{ nomeDoGrupo(g) }}</div>
                 <div class="faint small">
@@ -74,14 +74,14 @@ const base = import.meta.env.BASE_URL;
                 </div>
               </div>
               <span v-if="cloud.grupo?.id === g.id" class="chip on">em uso</span>
-              <span class="ms faint">chevron_right</span>
+              <span aria-hidden="true" class="ms faint">chevron_right</span>
             </li>
           </ul>
-          <button class="btn" @click="criando = true"><span class="ms">group_add</span>Novo grupo</button>
+          <button class="btn" @click="criando = true"><span aria-hidden="true" class="ms">group_add</span>Novo grupo</button>
         </div>
 
         <div class="card">
-          <h3 class="section-title"><span class="ms">public</span>Acervo geral</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">public</span>Acervo geral</h3>
           <p>
             É a aba <b>Músicas</b> da tela inicial: todas as músicas de quem usa o app. As suas entram lá
             sozinhas (continuam suas; os outros só sugerem). Ao tocar ou pôr no repertório uma do acervo,

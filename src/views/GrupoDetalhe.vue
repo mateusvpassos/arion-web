@@ -67,8 +67,8 @@ const sub = (s: Song) => [
 <template>
   <div>
     <AppBar :titulo="g ? nomeDoGrupo(g) : 'Grupo'">
-      <button v-if="g && dono" class="icon-btn" title="Renomear" @click="renomeando = true">
-        <span class="ms">edit</span></button>
+      <button v-if="g && dono" class="icon-btn" title="Renomear" aria-label="Renomear" @click="renomeando = true">
+        <span aria-hidden="true" class="ms">edit</span></button>
     </AppBar>
     <div class="wrap">
       <p v-if="!g" class="muted">Grupo não encontrado (foi apagado ou você saiu).</p>
@@ -76,31 +76,31 @@ const sub = (s: Song) => [
       <template v-else>
         <!-- em uso -->
         <div class="card">
-          <h3 class="section-title"><span class="ms">{{ emUso ? 'check_circle' : 'radio_button_unchecked' }}</span>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">{{ emUso ? 'check_circle' : 'radio_button_unchecked' }}</span>
             {{ emUso ? 'Em uso no app' : 'Não está em uso' }}</h3>
           <p v-if="emUso">As músicas e os repertórios da tela inicial são deste grupo.</p>
           <template v-else>
             <p>Abra p/ ver as músicas e os repertórios deste grupo na tela inicial e tocar com eles.</p>
-            <button class="btn" @click="usar"><span class="ms">open_in_new</span>Usar este grupo</button>
+            <button class="btn" @click="usar"><span aria-hidden="true" class="ms">open_in_new</span>Usar este grupo</button>
           </template>
         </div>
 
         <!-- pessoas -->
         <div class="card">
-          <h3 class="section-title"><span class="ms">group</span>Pessoas ({{ g.membros.length }})</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">group</span>Pessoas ({{ g.membros.length }})</h3>
           <ul class="lista">
             <li v-for="m in g.membros" :key="m">
               <span class="av">{{ (nomeDe(m)[0] ?? '?').toUpperCase() }}</span>
               <div class="grow"><div>{{ nomeDe(m) }}{{ m === eu ? ' (você)' : '' }}</div>
                 <div class="faint small">{{ m }}{{ m === g.dono ? ' · dono do grupo' : '' }}</div></div>
-              <button v-if="dono && m !== g.dono" class="icon-btn" title="Tirar do grupo" @click="tirarPessoa = m">
-                <span class="ms">person_remove</span></button>
+              <button v-if="dono && m !== g.dono" class="icon-btn" title="Tirar do grupo" aria-label="Tirar do grupo" @click="tirarPessoa = m">
+                <span aria-hidden="true" class="ms">person_remove</span></button>
             </li>
           </ul>
           <template v-if="dono">
             <form class="linha" @submit.prevent="convida">
               <input v-model="convite" type="email" placeholder="E-mail Google da pessoa" class="grow" />
-              <button class="btn" :disabled="!convite.trim()"><span class="ms">person_add</span>Adicionar</button>
+              <button class="btn" :disabled="!convite.trim()"><span aria-hidden="true" class="ms">person_add</span>Adicionar</button>
             </form>
             <p class="faint small">A pessoa entra no app com esse e-mail e o grupo aparece na lista dela.</p>
           </template>
@@ -109,25 +109,25 @@ const sub = (s: Song) => [
         <!-- músicas -->
         <div class="card">
           <div class="topo">
-            <h3 class="section-title"><span class="ms">library_music</span>
+            <h3 class="section-title"><span aria-hidden="true" class="ms">library_music</span>
               Músicas{{ musicas ? ` (${musicas.length})` : '' }}</h3>
             <button class="btn text" @click="abrir({ nome: 'grupoAdicionar', id: g.id })">
-              <span class="ms">add</span>Adicionar</button>
+              <span aria-hidden="true" class="ms">add</span>Adicionar</button>
           </div>
           <p v-if="!musicas" class="faint">Carregando…</p>
           <p v-else-if="!musicas.length" class="faint">Nenhuma música ainda. Clique em Adicionar p/ trazer do acervo.</p>
           <ul v-else class="lista">
             <li v-for="s in musicas" :key="s.id">
               <div class="grow"><div>{{ s.title }}</div><div class="faint small">{{ sub(s) }}</div></div>
-              <button v-if="s.dono === eu" class="icon-btn" title="Tirar do grupo" @click="tirarMusica = s">
-                <span class="ms">remove_circle_outline</span></button>
+              <button v-if="s.dono === eu" class="icon-btn" title="Tirar do grupo" aria-label="Tirar do grupo" @click="tirarMusica = s">
+                <span aria-hidden="true" class="ms">remove_circle_outline</span></button>
             </li>
           </ul>
         </div>
 
         <!-- repertórios -->
         <div class="card">
-          <h3 class="section-title"><span class="ms">queue_music</span>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">queue_music</span>
             Repertórios{{ repertorios ? ` (${repertorios.length})` : '' }}</h3>
           <p v-if="!repertorios" class="faint">Carregando…</p>
           <p v-else-if="!repertorios.length" class="faint">Nenhum repertório ainda.</p>
@@ -144,7 +144,7 @@ const sub = (s: Song) => [
 
         <!-- quem edita direto -->
         <div v-if="outros.length" class="card">
-          <h3 class="section-title"><span class="ms">edit_note</span>Quem mexe nas suas músicas</h3>
+          <h3 class="section-title"><span aria-hidden="true" class="ms">edit_note</span>Quem mexe nas suas músicas</h3>
           <p>
             Normalmente os outros só sugerem mudanças nas suas músicas e você aceita ou não. Marque quem pode
             mudar direto, sem pedir:
@@ -152,13 +152,13 @@ const sub = (s: Song) => [
           <div class="chips">
             <button v-for="m in outros" :key="m" class="chip" :class="{ on: confianca.includes(m) }"
               @click="alternaConfianca(m)">
-              <span class="ms">{{ confianca.includes(m) ? 'check' : 'add' }}</span>{{ nomeDe(m) }}
+              <span aria-hidden="true" class="ms">{{ confianca.includes(m) ? 'check' : 'add' }}</span>{{ nomeDe(m) }}
             </button>
           </div>
         </div>
 
         <button v-if="dono && !g.pessoal" class="btn text perigo" @click="apagando = true">
-          <span class="ms">delete</span>Apagar grupo</button>
+          <span aria-hidden="true" class="ms">delete</span>Apagar grupo</button>
       </template>
       <p v-if="cloud.erro" class="error">{{ cloud.erro }}</p>
     </div>

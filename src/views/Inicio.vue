@@ -93,6 +93,8 @@ function confirmaApagar() {
 }
 
 const fecharMenu = () => (menu.value = null);
+// lista vazia já tem o botão de criar no meio da tela (o flutuante cobria o texto)
+const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.carregou && !hits.value.length : !reps.value.length));
 </script>
 
 <template>
@@ -103,45 +105,64 @@ const fecharMenu = () => (menu.value = null);
       <template v-if="cloud.grupo" #sub>
         <button class="grupo-em-uso" @click="abrir({ nome: 'grupo' })">{{ nomeDoGrupo(cloud.grupo) }} ▾</button>
       </template>
-      <button v-if="ativa" class="icon-btn" title="Minhas músicas" @click="abrir({ nome: 'minhas' })">
-        <span class="ms">library_music</span>
+      <button v-if="ativa" class="icon-btn" title="Minhas músicas" aria-label="Minhas músicas" @click="abrir({ nome: 'minhas' })">
+        <span aria-hidden="true" class="ms">library_music</span>
       </button>
-      <button v-if="cloud.user" class="icon-btn" title="Sugestões" @click="abrir({ nome: 'sugestoes' })">
-        <span class="ms">inbox</span>
+      <button v-if="cloud.user" class="icon-btn" title="Sugestões" aria-label="Sugestões" @click="abrir({ nome: 'sugestoes' })">
+        <span aria-hidden="true" class="ms">inbox</span>
         <span v-if="paraDecidir.length + paraDecidirA.length" class="dot">{{ paraDecidir.length + paraDecidirA.length }}</span>
       </button>
-      <button v-if="ativa" class="icon-btn" title="Atividade recente" @click="abrir({ nome: 'atividade' })">
-        <span class="ms">history</span>
+      <button v-if="ativa" class="icon-btn largo" title="Atividade recente" aria-label="Atividade recente" @click="abrir({ nome: 'atividade' })">
+        <span aria-hidden="true" class="ms">history</span>
       </button>
-      <button v-if="disponivel" class="icon-btn" title="Grupos" @click="abrir({ nome: 'grupo' })">
-        <span class="ms">{{ ativa ? 'group' : 'cloud_off' }}</span>
+      <button v-if="disponivel" class="icon-btn largo" title="Grupos" aria-label="Grupos" @click="abrir({ nome: 'grupo' })">
+        <span aria-hidden="true" class="ms">{{ ativa ? 'group' : 'cloud_off' }}</span>
       </button>
-      <button class="icon-btn" :class="{ on: live.ativo }" title="Ao vivo" @click="abrir({ nome: 'aovivo' })">
-        <span class="ms">cell_tower</span>
+      <button class="icon-btn" :class="{ on: live.ativo }" title="Ao vivo" aria-label="Ao vivo" @click="abrir({ nome: 'aovivo' })">
+        <span aria-hidden="true" class="ms">cell_tower</span>
       </button>
-      <button class="icon-btn" title="Configurações" @click="abrir({ nome: 'config' })">
-        <span class="ms">settings</span>
+      <button class="icon-btn largo" title="Configurações" aria-label="Configurações" @click="abrir({ nome: 'config' })">
+        <span aria-hidden="true" class="ms">settings</span>
       </button>
+      <!-- celular: o que não cabe na barra vai p/ o menu (senão some o nome do grupo) -->
+      <div class="menu-wrap estreito" @click.stop>
+        <button class="icon-btn" title="Mais" aria-label="Mais" @click="menu = menu === 'barra' ? null : 'barra'">
+          <span aria-hidden="true" class="ms">more_vert</span>
+        </button>
+        <div v-if="menu === 'barra'" class="menu">
+          <button v-if="ativa" @click="abrir({ nome: 'atividade' }); fecharMenu()">
+            <span aria-hidden="true" class="ms">history</span>Atividade recente</button>
+          <button v-if="disponivel" @click="abrir({ nome: 'grupo' }); fecharMenu()">
+            <span aria-hidden="true" class="ms">group</span>Grupos</button>
+          <button @click="abrir({ nome: 'config' }); fecharMenu()">
+            <span aria-hidden="true" class="ms">settings</span>Configurações</button>
+        </div>
+      </div>
     </AppBar>
 
     <p v-if="cloud.erro" class="error wrap">⚠ {{ cloud.erro }}</p>
 
     <div v-if="!be.pronto.value" class="wrap"><div class="entrar card">
       <template v-if="!cloud.user">
-        <h2 class="section-title"><span class="ms">login</span>Entrar</h2>
-        <p>Entre com a sua conta Google para ver as suas músicas.</p>
+        <h2 class="section-title"><span aria-hidden="true" class="ms">login</span>Entrar</h2>
+        <p>O Arion guarda cifras e monta repertórios para tocar ao vivo, sozinho ou com o seu grupo.
+          Entre com a sua conta Google para ver as suas músicas.</p>
         <div class="acoes-entrar">
           <button class="btn" @click="disponivel && (emulador ? abrir({ nome: 'grupo' }) : entrar())">
-            <span class="ms">account_circle</span>Entrar com Google
+            <span aria-hidden="true" class="ms">account_circle</span>Entrar com Google
           </button>
         </div>
+        <p class="faint aceite">
+          Ao entrar você aceita os <a href="termos.html" target="_blank">termos de uso</a> e a
+          <a href="privacidade.html" target="_blank">política de privacidade</a>.
+        </p>
       </template>
       <template v-else-if="cloud.liberado === false">
-        <h2 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h2>
+        <h2 class="section-title"><span aria-hidden="true" class="ms">lock_clock</span>Acesso ainda não liberado</h2>
         <p>Peça p/ alguém que já usa o Arion te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
           Ao ser adicionado, o seu acesso é liberado.</p>
         <div class="acoes-entrar">
-          <button class="btn" @click="conferirLiberacao()"><span class="ms">refresh</span>Já me adicionaram</button>
+          <button class="btn" @click="conferirLiberacao()"><span aria-hidden="true" class="ms">refresh</span>Já me adicionaram</button>
         </div>
       </template>
       <p v-else class="muted">Carregando a sua biblioteca…</p>
@@ -149,12 +170,12 @@ const fecharMenu = () => (menu.value = null);
 
     <template v-else>
       <nav class="tabs no-print">
-        <button :class="{ on: prefs.aba === 'songs' }" @click="prefs.aba = 'songs'">Músicas</button>
+        <button :class="{ on: prefs.aba === 'songs' }" @click="prefs.aba = 'songs'">Acervo</button>
         <button :class="{ on: prefs.aba === 'setlists' }" @click="prefs.aba = 'setlists'">Repertórios</button>
       </nav>
       <div class="wrap">
         <div class="busca">
-          <span class="ms">search</span>
+          <span aria-hidden="true" class="ms">search</span>
           <input v-model="busca" :placeholder="prefs.aba === 'songs' ? 'Buscar no acervo (nome, artista ou trecho da letra)...' : 'Buscar repertório...'" />
         </div>
 
@@ -175,28 +196,35 @@ const fecharMenu = () => (menu.value = null);
               </div>
               <span v-if="copiaDaObra(obraDe(h.song))" class="ms tem" title="Está nas suas músicas">library_add_check</span>
               <div class="menu-wrap" @click.stop>
-                <button class="icon-btn" @click="menu = menu === h.song.id ? null : h.song.id">
-                  <span class="ms">more_vert</span>
+                <button class="icon-btn" title="Mais opções" aria-label="Mais opções" @click="menu = menu === h.song.id ? null : h.song.id">
+                  <span aria-hidden="true" class="ms">more_vert</span>
                 </button>
                 <div v-if="menu === h.song.id" class="menu">
                   <button v-if="!copiaDaObra(obraDe(h.song))" @click="adicionar(h.song); fecharMenu()">
-                    <span class="ms">library_add</span>Adicionar às minhas músicas</button>
+                    <span aria-hidden="true" class="ms">library_add</span>Adicionar às minhas músicas</button>
                   <button @click="abrir({ nome: 'obra', obra: obraDe(h.song) }); fecharMenu()">
-                    <span class="ms">layers</span>{{ (obras[obraDe(h.song)]?.length ?? 1) > 1 ? 'Ver versões' : 'Versões e detalhes' }}</button>
+                    <span aria-hidden="true" class="ms">layers</span>{{ (obras[obraDe(h.song)]?.length ?? 1) > 1 ? 'Ver versões' : 'Versões e detalhes' }}</button>
                   <button @click="abrir({ nome: 'editar', id: h.song.id, acervo: true }); fecharMenu()">
-                    <span class="ms">{{ podeEditarA(h.song) ? 'edit' : 'rate_review' }}</span>
+                    <span aria-hidden="true" class="ms">{{ podeEditarA(h.song) ? 'edit' : 'rate_review' }}</span>
                     {{ podeEditarA(h.song) ? `Editar (${rotulo(h.song)})` : 'Sugerir mudança' }}</button>
                 </div>
               </div>
             </li>
             <li v-if="!acervo.carregou" class="empty">Carregando…</li>
-            <li v-else-if="!hits.length" class="empty">{{ busca ? 'Nada encontrado' : 'Nenhuma música no acervo' }}</li>
+            <li v-else-if="busca && !hits.length" class="empty">Nada encontrado</li>
+            <li v-else-if="!hits.length" class="vazio">
+              <span aria-hidden="true" class="ms">library_music</span>
+              <div class="title">O acervo ainda está vazio</div>
+              <p class="faint">Cole uma cifra (do Cifra Club, por exemplo) ou digite a sua. Ela fica nas suas músicas
+                e no acervo, para o seu grupo tocar junto.</p>
+              <button class="btn" @click="novaMusica"><span aria-hidden="true" class="ms">add</span>Criar a primeira música</button>
+            </li>
           </ul>
         </template>
 
         <ul v-else class="list">
           <li v-for="sl in reps" :key="sl.id" class="row" @click="abrir({ nome: 'repertorio', id: sl.id })">
-            <span class="ms rep-ic">queue_music</span>
+            <span aria-hidden="true" class="ms rep-ic">queue_music</span>
             <div class="grow">
               <div class="title">{{ sl.name }}</div>
               <div class="sub">
@@ -205,8 +233,8 @@ const fecharMenu = () => (menu.value = null);
               </div>
             </div>
             <div class="menu-wrap" @click.stop>
-              <button class="icon-btn" @click="menu = menu === sl.id ? null : sl.id">
-                <span class="ms">more_vert</span>
+              <button class="icon-btn" title="Mais opções" aria-label="Mais opções" @click="menu = menu === sl.id ? null : sl.id">
+                <span aria-hidden="true" class="ms">more_vert</span>
               </button>
               <div v-if="menu === sl.id" class="menu">
                 <button @click="be.duplicarSetlist(sl as Setlist); fecharMenu()">Duplicar</button>
@@ -215,19 +243,25 @@ const fecharMenu = () => (menu.value = null);
               </div>
             </div>
           </li>
-          <li v-if="!reps.length" class="empty">Nenhum repertório</li>
+          <li v-if="busca && !reps.length" class="empty">Nada encontrado</li>
+          <li v-else-if="!reps.length" class="vazio">
+            <span aria-hidden="true" class="ms">queue_music</span>
+            <div class="title">Nenhum repertório ainda</div>
+            <p class="faint">Monte a lista de um culto, show ou ensaio: as músicas na ordem, cada uma no tom do dia.</p>
+            <button class="btn" @click.stop="novoRep = true"><span aria-hidden="true" class="ms">add</span>Criar repertório</button>
+          </li>
         </ul>
       </div>
 
-      <button class="fab no-print" @click="prefs.aba === 'songs' ? novaMusica() : (novoRep = true)">
-        <span class="ms">add</span>{{ prefs.aba === 'songs' ? 'Música' : 'Repertório' }}
+      <button v-if="!vazia" class="fab no-print" @click="prefs.aba === 'songs' ? novaMusica() : (novoRep = true)">
+        <span aria-hidden="true" class="ms">add</span>{{ prefs.aba === 'songs' ? 'Música' : 'Repertório' }}
       </button>
     </template>
 
     <Prompt v-if="novoRep" titulo="Novo repertório" dica="Nome" ok="Criar"
       @fechar="novoRep = false" @ok="criarRep">
       <label class="data">
-        <span class="ms">event</span>
+        <span aria-hidden="true" class="ms">event</span>
         <input v-model="dataNovo" type="date" />
         <span class="muted">Data do evento</span>
       </label>
@@ -238,7 +272,20 @@ const fecharMenu = () => (menu.value = null);
 </template>
 
 <style scoped>
-.grupo-em-uso { all: unset; cursor: pointer; font: inherit; color: inherit; }
+.grupo-em-uso {
+  all: unset; cursor: pointer; font: inherit; color: inherit;
+  display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.estreito { display: none; }
+@media (max-width: 480px) {
+  .largo { display: none; }
+  .estreito { display: block; }
+}
+.aceite { font-size: 12px; margin: 10px 0 0; }
+.vazio { text-align: center; padding: 32px 16px; list-style: none; }
+.vazio > .ms { font-size: 40px; color: var(--primary); }
+.vazio .title { font-weight: 650; margin: 8px 0 4px; }
+.vazio p { max-width: 420px; margin: 0 auto 14px; font-size: 14px; line-height: 1.45; }
 .grupo-em-uso:hover { color: var(--fg); }
 .logo { width: 28px; height: 28px; margin: 0 2px 0 2px; }
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 12px 110px; }

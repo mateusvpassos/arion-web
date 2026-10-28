@@ -13,7 +13,7 @@ const linhas = computed(() => diffResumo(diffLinhas(textoDa(props.antes), textoD
 <template>
   <div>
     <div v-for="c in campos" :key="c" class="campo">
-      <span class="ms">edit_note</span>{{ c }}
+      <span aria-hidden="true" class="ms">edit_note</span>{{ c }}
     </div>
     <p v-if="!linhas.length" class="muted">A cifra (letra e acordes) não muda.</p>
     <div v-else class="diff">

@@ -44,7 +44,7 @@ function novaMusica() {
     <AppBar titulo="Minhas músicas" :sub="`${be.songs.value.length} na ${cloud.grupo?.nome ?? 'biblioteca'}`" />
     <div class="wrap">
       <div class="busca">
-        <span class="ms">search</span>
+        <span aria-hidden="true" class="ms">search</span>
         <input v-model="busca" placeholder="Buscar (nome, artista ou trecho da letra)..." />
       </div>
       <ul class="list">
@@ -59,24 +59,24 @@ function novaMusica() {
             </div>
           </div>
           <div class="menu-wrap" @click.stop>
-            <button class="icon-btn" @click="menu = menu === h.song.id ? null : h.song.id">
-              <span class="ms">more_vert</span>
+            <button class="icon-btn" title="Mais opções" aria-label="Mais opções" @click="menu = menu === h.song.id ? null : h.song.id">
+              <span aria-hidden="true" class="ms">more_vert</span>
             </button>
             <div v-if="menu === h.song.id" class="menu">
               <button @click="abrir({ nome: 'editar', id: h.song.id }); menu = null">
-                <span class="ms">{{ be.podeEditarSong(h.song) ? 'edit' : 'rate_review' }}</span>
+                <span aria-hidden="true" class="ms">{{ be.podeEditarSong(h.song) ? 'edit' : 'rate_review' }}</span>
                 {{ be.podeEditarSong(h.song) ? 'Editar' : 'Sugerir mudança' }}
               </button>
-              <button @click="be.duplicarSong(h.song); menu = null"><span class="ms">content_copy</span>Duplicar</button>
+              <button @click="be.duplicarSong(h.song); menu = null"><span aria-hidden="true" class="ms">content_copy</span>Duplicar</button>
               <button v-if="be.souDono(h.song.dono)" @click="apagar = { id: h.song.id, nome: h.song.title }; menu = null">
-                <span class="ms">delete</span>Excluir</button>
+                <span aria-hidden="true" class="ms">delete</span>Excluir</button>
             </div>
           </div>
         </li>
         <li v-if="!hits.length" class="empty">{{ busca ? 'Nada encontrado' : 'Nenhuma música ainda' }}</li>
       </ul>
     </div>
-    <button class="fab no-print" @click="novaMusica"><span class="ms">add</span>Música</button>
+    <button class="fab no-print" @click="novaMusica"><span aria-hidden="true" class="ms">add</span>Música</button>
     <Prompt v-if="apagar" titulo="Excluir?" :texto="`“${apagar.nome}” sai da sua biblioteca (o acervo geral não muda).`"
       sem-campo ok="Excluir" @fechar="apagar = null" @ok="be.excluirSong(apagar!.id); apagar = null" />
   </div>

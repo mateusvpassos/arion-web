@@ -5,7 +5,7 @@ defineProps<{ titulo: string; sub?: string; semVoltar?: boolean }>();
 
 <template>
   <header class="bar no-print">
-    <button v-if="!semVoltar" class="icon-btn" title="Voltar" @click="voltar"><span class="ms">arrow_back</span></button>
+    <button v-if="!semVoltar" class="icon-btn" title="Voltar" aria-label="Voltar" @click="voltar"><span aria-hidden="true" class="ms">arrow_back</span></button>
     <slot name="logo" />
     <div class="t">
       <div class="titulo">{{ titulo }}</div>

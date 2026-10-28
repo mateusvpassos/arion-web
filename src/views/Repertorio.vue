@@ -113,23 +113,23 @@ const perm = ref(false);
   <div v-if="!sl" class="empty">Repertório não encontrado</div>
   <div v-else @click="exportar = false">
     <AppBar :titulo="sl.name" :sub="fmtData(sl.date)">
-      <button v-if="ativa" class="icon-btn" title="Dono e quem pode editar" @click="perm = true">
-        <span class="ms">manage_accounts</span>
+      <button v-if="ativa" class="icon-btn" title="Dono e quem pode editar" aria-label="Dono e quem pode editar" @click="perm = true">
+        <span aria-hidden="true" class="ms">manage_accounts</span>
       </button>
-      <button class="icon-btn" title="Iniciar" :disabled="!musicas.length"
+      <button class="icon-btn" title="Iniciar" aria-label="Iniciar" :disabled="!musicas.length"
         @click="abrir({ nome: 'musica', id: musicas[0].id, setlistId: sl.id })">
-        <span class="ms fill">play_circle</span>
+        <span aria-hidden="true" class="ms fill">play_circle</span>
       </button>
-      <button class="icon-btn" title="PDF (todas as cifras, no tom do repertório)" :disabled="!musicas.length"
-        @click="abrir({ nome: 'imprimir', setlistId: sl.id })"><span class="ms">print</span></button>
+      <button class="icon-btn" title="PDF (todas as cifras, no tom do repertório)" aria-label="PDF (todas as cifras, no tom do repertório)" :disabled="!musicas.length"
+        @click="abrir({ nome: 'imprimir', setlistId: sl.id })"><span aria-hidden="true" class="ms">print</span></button>
       <div class="menu-wrap">
-        <button class="icon-btn" title="Exportar" :disabled="!musicas.length" @click.stop="exportar = !exportar">
-          <span class="ms">ios_share</span></button>
+        <button class="icon-btn" title="Exportar" aria-label="Exportar" :disabled="!musicas.length" @click.stop="exportar = !exportar">
+          <span aria-hidden="true" class="ms">ios_share</span></button>
         <div v-if="exportar" class="menu" @click.stop>
-          <button @click="exportar = false; abrir({ nome: 'imprimir', setlistId: sl.id })"><span class="ms">print</span>PDF (todas as cifras)</button>
-          <button @click="exporta('docx')"><span class="ms">description</span>Word (.docx)</button>
-          <button @click="exporta('img')"><span class="ms">image</span>Imagem da lista</button>
-          <button @click="exporta('txt')"><span class="ms">lyrics</span>Letras (TXT) — cantores</button>
+          <button @click="exportar = false; abrir({ nome: 'imprimir', setlistId: sl.id })"><span aria-hidden="true" class="ms">print</span>PDF (todas as cifras)</button>
+          <button @click="exporta('docx')"><span aria-hidden="true" class="ms">description</span>Word (.docx)</button>
+          <button @click="exporta('img')"><span aria-hidden="true" class="ms">image</span>Imagem da lista</button>
+          <button @click="exporta('txt')"><span aria-hidden="true" class="ms">lyrics</span>Letras (TXT) — cantores</button>
         </div>
       </div>
     </AppBar>
@@ -140,7 +140,7 @@ const perm = ref(false);
       </div>
       <div v-else class="topo">
         <input v-model="nome" class="grow" @blur="renomear" @keyup.enter="renomear" />
-        <label class="data"><span class="ms">event</span><input v-model="dataIso" type="date" /></label>
+        <label class="data"><span aria-hidden="true" class="ms">event</span><input v-model="dataIso" type="date" /></label>
       </div>
 
       <ol class="list">
@@ -155,10 +155,10 @@ const perm = ref(false);
             </div>
           </div>
           <template v-if="pode">
-            <button class="icon-btn" title="Subir" @click.stop="mover(i, -1)"><span class="ms">arrow_upward</span></button>
-            <button class="icon-btn" title="Descer" @click.stop="mover(i, 1)"><span class="ms">arrow_downward</span></button>
-            <button class="icon-btn" title="Tirar do repertório" @click.stop="tirar(s.id)">
-              <span class="ms">remove_circle_outline</span>
+            <button class="icon-btn" title="Subir" aria-label="Subir" @click.stop="mover(i, -1)"><span aria-hidden="true" class="ms">arrow_upward</span></button>
+            <button class="icon-btn" title="Descer" aria-label="Descer" @click.stop="mover(i, 1)"><span aria-hidden="true" class="ms">arrow_downward</span></button>
+            <button class="icon-btn" title="Tirar do repertório" aria-label="Tirar do repertório" @click.stop="tirar(s.id)">
+              <span aria-hidden="true" class="ms">remove_circle_outline</span>
             </button>
           </template>
         </li>
@@ -166,7 +166,7 @@ const perm = ref(false);
       </ol>
     </div>
 
-    <button v-if="pode" class="fab no-print" @click="add = true"><span class="ms">add</span>Músicas</button>
+    <button v-if="pode" class="fab no-print" @click="add = true"><span aria-hidden="true" class="ms">add</span>Músicas</button>
 
     <!-- adicionar -->
     <div v-if="add" class="scrim" @click.self="add = false">
@@ -181,7 +181,7 @@ const perm = ref(false);
         </p>
         <ul class="list">
           <li v-for="h in achadas" :key="h.song.id" class="row add-row" @click="marcar(h.song)">
-            <span class="ms" :class="{ fill: sl.songIds.includes(h.song.id) }" style="color: var(--primary)">
+            <span aria-hidden="true" class="ms" :class="{ fill: sl.songIds.includes(h.song.id) }" style="color: var(--primary)">
               {{ sl.songIds.includes(h.song.id) ? 'check_box' : 'check_box_outline_blank' }}
             </span>
             <div class="grow">

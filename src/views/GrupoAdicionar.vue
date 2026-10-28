@@ -46,13 +46,13 @@ const sublinha = (s: Song) => [s.key, s.artist, s.nomeVersao ? rotulo(s) : '', j
       <p v-if="!acervo.carregou" class="faint">Carregando o acervo…</p>
       <ul class="lista">
         <li v-for="h in hits" :key="h.song.id" :class="{ off: ja.has(h.song.id) }" @click="alterna(h.song)">
-          <span class="ms caixa">{{ ja.has(h.song.id) || marcadas.has(h.song.id) ? 'check_box' : 'check_box_outline_blank' }}</span>
+          <span aria-hidden="true" class="ms caixa">{{ ja.has(h.song.id) || marcadas.has(h.song.id) ? 'check_box' : 'check_box_outline_blank' }}</span>
           <div class="grow"><div>{{ h.song.title }}</div><div class="faint small">{{ sublinha(h.song) }}</div></div>
         </li>
       </ul>
     </div>
     <button v-if="marcadas.size" class="btn fab" @click="adicionar">
-      <span class="ms">check</span>Adicionar {{ marcadas.size }}</button>
+      <span aria-hidden="true" class="ms">check</span>Adicionar {{ marcadas.size }}</button>
   </div>
 </template>
 

@@ -25,7 +25,7 @@ const imprimir = () => window.print();
 <template>
   <div>
     <AppBar :titulo="`Imprimir — ${titulo}`" sub="Use “Salvar como PDF” no destino da impressão">
-      <button class="btn" @click="imprimir"><span class="ms">print</span>Imprimir / PDF</button>
+      <button class="btn" @click="imprimir"><span aria-hidden="true" class="ms">print</span>Imprimir / PDF</button>
     </AppBar>
     <div class="folha" :class="{ varias: itens.length > 1 }">
       <header v-if="sl && !props.songId" class="capa">

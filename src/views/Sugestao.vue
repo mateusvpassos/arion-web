@@ -25,7 +25,7 @@ const motivo = ref(false);
     <AppBar :titulo="x.titulo" />
     <div class="wrap">
       <p class="quem">
-        <span class="ms fill" :style="{ color: statusIcone(x.status).cor }">{{ statusIcone(x.status).ic }}</span>
+        <span aria-hidden="true" class="ms fill" :style="{ color: statusIcone(x.status).cor }">{{ statusIcone(x.status).ic }}</span>
         {{ x.porNome || x.por }} sugeriu em {{ fmtQuando(x.em) }}{{ x.status !== 'pendente' ? ' — ' + statusTexto(x) : '' }}
       </p>
       <p v-if="x.nota"><i>“{{ x.nota }}”</i></p>
@@ -39,11 +39,11 @@ const motivo = ref(false);
 
       <div v-if="podeDecidir || minhaPendente" class="acoes">
         <template v-if="podeDecidir">
-          <button class="btn outlined" @click="motivo = true"><span class="ms">close</span>Recusar</button>
-          <button class="btn" @click="(x!.acervo ? aceitarA : aceitar)(x!); voltar()"><span class="ms">check</span>Aceitar</button>
+          <button class="btn outlined" @click="motivo = true"><span aria-hidden="true" class="ms">close</span>Recusar</button>
+          <button class="btn" @click="(x!.acervo ? aceitarA : aceitar)(x!); voltar()"><span aria-hidden="true" class="ms">check</span>Aceitar</button>
         </template>
         <button v-else class="btn outlined" @click="(x!.acervo ? cancelarA : cancelar)(x!); voltar()">
-          <span class="ms">undo</span>Desistir da sugestão
+          <span aria-hidden="true" class="ms">undo</span>Desistir da sugestão
         </button>
       </div>
     </div>

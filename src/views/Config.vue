@@ -116,7 +116,7 @@ async function importar(e: Event) {
       </section>
 
       <section class="card">
-        <h3 class="section-title"><span class="ms">keyboard</span>Pedal / teclado</h3>
+        <h3 class="section-title"><span aria-hidden="true" class="ms">keyboard</span>Pedal / teclado</h3>
         <p class="faint dica">Pedal Bluetooth de virar página manda teclas. Na tela da música: avança rola p/ baixo
           (no fim, vai p/ a próxima do repertório); volta faz o contrário.</p>
         <div class="lbl">Quanto cada toque rola: {{ Math.round(prefs.passo * 100) }}% da tela</div>
@@ -133,19 +133,19 @@ async function importar(e: Event) {
       </section>
 
       <section class="card">
-        <h3 class="section-title"><span class="ms">cell_tower</span>Ao vivo</h3>
+        <h3 class="section-title"><span aria-hidden="true" class="ms">cell_tower</span>Ao vivo</h3>
         <label class="lbl">Nome deste navegador na sessão</label>
         <input v-model="prefs.aparelho" placeholder="Ex.: Notebook do teclado" class="full" />
         <button class="btn text" @click="abrir({ nome: 'aovivo' })">Abrir sessão ao vivo</button>
       </section>
 
       <section class="card">
-        <h3 class="section-title"><span class="ms">backup</span>Backup</h3>
+        <h3 class="section-title"><span aria-hidden="true" class="ms">backup</span>Backup</h3>
         <div class="linha">
           <button class="btn tonal" :disabled="!be.songs.value.length" @click="exportar">
-            <span class="ms">download</span>Exportar (JSON)</button>
+            <span aria-hidden="true" class="ms">download</span>Exportar (JSON)</button>
           <button class="btn tonal" :disabled="!ativa" @click="arquivo?.click()">
-            <span class="ms">upload</span>Importar (JSON)</button>
+            <span aria-hidden="true" class="ms">upload</span>Importar (JSON)</button>
           <input ref="arquivo" type="file" accept=".json,application/json" hidden @change="importar" />
         </div>
         <p class="faint dica">Mesmo formato do backup do app. Importar mescla em
@@ -155,17 +155,17 @@ async function importar(e: Event) {
       </section>
 
       <section class="card">
-        <h3 class="section-title"><span class="ms">privacy_tip</span>Privacidade</h3>
+        <h3 class="section-title"><span aria-hidden="true" class="ms">privacy_tip</span>Privacidade</h3>
         <div class="linha">
           <a class="btn tonal" :href="`${base}privacidade.html`" target="_blank">
-            <span class="ms">open_in_new</span>Política de privacidade</a>
+            <span aria-hidden="true" class="ms">open_in_new</span>Política de privacidade</a>
           <a class="btn tonal" :href="`${base}termos.html`" target="_blank">
-            <span class="ms">open_in_new</span>Termos de uso</a>
+            <span aria-hidden="true" class="ms">open_in_new</span>Termos de uso</a>
         </div>
         <template v-if="cloud.user">
           <p class="faint dica">Conta: {{ cloud.user.email }}</p>
           <button class="btn danger" @click="excluindo = true">
-            <span class="ms">person_remove</span>Excluir minha conta</button>
+            <span aria-hidden="true" class="ms">person_remove</span>Excluir minha conta</button>
         </template>
         <p v-if="excluiu" class="ok">Pedido de exclusão enviado. A conta e os dados somem em até 30 dias.</p>
       </section>
