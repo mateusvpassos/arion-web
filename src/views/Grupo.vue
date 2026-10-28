@@ -5,7 +5,6 @@ import AppBar from '../components/AppBar.vue';
 import Prompt from '../components/Prompt.vue';
 import {
   cloud, eu, nomeDe, entrar, sair, criarGrupo, disponivel, entrarTeste, ehMinha, nomeDoGrupo, conferirLiberacao,
-  pedirExclusao,
 } from '../cloud';
 import { emulador } from '../firebase';
 import { abrir } from '../nav';
@@ -13,14 +12,7 @@ import { abrir } from '../nav';
 const emailTeste = ref('');
 const nomeTeste = ref('');
 const criando = ref(false);
-const excluindo = ref(false);
-const excluiu = ref(false);
 const base = import.meta.env.BASE_URL;
-
-async function excluir() {
-  excluindo.value = false;
-  excluiu.value = await pedirExclusao();
-}
 </script>
 
 <template>
@@ -45,7 +37,6 @@ async function excluir() {
           Ao entrar você aceita os <a :href="`${base}termos.html`" target="_blank">termos de uso</a> e a
           <a :href="`${base}privacidade.html`" target="_blank">política de privacidade</a>.
         </p>
-        <p v-if="excluiu" class="small">Pedido de exclusão enviado. A conta e os dados somem em até 30 dias.</p>
       </div>
 
       <template v-else>
@@ -58,14 +49,6 @@ async function excluir() {
           </div>
           <button class="btn text" @click="sair">Sair</button>
         </div>
-        <p class="faint small links-conta">
-          <a :href="`${base}privacidade.html`" target="_blank">Política de privacidade</a> ·
-          <a :href="`${base}termos.html`" target="_blank">Termos de uso</a> ·
-          <a href="#" @click.prevent="excluindo = true">Excluir minha conta</a>
-        </p>
-        <Prompt v-if="excluindo" titulo="Excluir minha conta?" sem-campo ok="Excluir"
-          texto="Apaga da nuvem a sua conta, as músicas e repertórios que são seus (inclusive nos grupos e no acervo geral), as suas sugestões e o seu nome. Os grupos que são seus passam para outra pessoa do grupo. A exclusão é feita em até 30 dias e não dá para desfazer."
-          @fechar="excluindo = false" @ok="excluir" />
 
         <div v-if="cloud.liberado === false" class="card">
           <h3 class="section-title"><span class="ms">lock_clock</span>Acesso ainda não liberado</h3>
@@ -119,7 +102,6 @@ async function excluir() {
 .conta { display: flex; align-items: center; gap: 14px; }
 .nome { font-weight: 700; font-size: 17px; }
 .small { font-size: 12px; }
-.links-conta { margin: -4px 4px 0; }
 .grupos { list-style: none; margin: 0 0 12px; padding: 0; }
 .grupos li {
   display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 10px; cursor: pointer;

@@ -6,7 +6,8 @@ import AppBar from '../components/AppBar.vue';
 import { prefs, abrir } from '../nav';
 import { CORES, hexDe } from '../tema';
 import * as be from '../backend';
-import { cloud, ativa } from '../cloud';
+import Prompt from '../components/Prompt.vue';
+import { cloud, ativa, pedirExclusao } from '../cloud';
 import { songToRaw, setlistToRaw, songFromRaw, setlistFromRaw } from '../types';
 import type { RawData } from '../types';
 
@@ -36,6 +37,15 @@ function grava(e: KeyboardEvent) {
 }
 window.addEventListener('keydown', grava, true);
 onBeforeUnmount(() => window.removeEventListener('keydown', grava, true));
+
+// ---------- privacidade ----------
+const base = import.meta.env.BASE_URL;
+const excluindo = ref(false);
+const excluiu = ref(false);
+async function excluir() {
+  excluindo.value = false;
+  excluiu.value = await pedirExclusao();
+}
 
 // ---------- backup ----------
 const aviso = ref('');
@@ -144,6 +154,25 @@ async function importar(e: Event) {
         <button class="btn text" @click="abrir({ nome: 'atividade' })">Ver histórico</button>
       </section>
 
+      <section class="card">
+        <h3 class="section-title"><span class="ms">privacy_tip</span>Privacidade</h3>
+        <div class="linha">
+          <a class="btn tonal" :href="`${base}privacidade.html`" target="_blank">
+            <span class="ms">open_in_new</span>Política de privacidade</a>
+          <a class="btn tonal" :href="`${base}termos.html`" target="_blank">
+            <span class="ms">open_in_new</span>Termos de uso</a>
+        </div>
+        <template v-if="cloud.user">
+          <p class="faint dica">Conta: {{ cloud.user.email }}</p>
+          <button class="btn danger" @click="excluindo = true">
+            <span class="ms">person_remove</span>Excluir minha conta</button>
+        </template>
+        <p v-if="excluiu" class="ok">Pedido de exclusão enviado. A conta e os dados somem em até 30 dias.</p>
+      </section>
+      <Prompt v-if="excluindo" titulo="Excluir minha conta?" sem-campo ok="Excluir"
+        texto="Apaga da nuvem a sua conta, as músicas e repertórios que são seus (inclusive nos grupos e no acervo geral), as suas sugestões e o seu nome. Os grupos que são seus passam para outra pessoa do grupo. A exclusão é feita em até 30 dias e não dá para desfazer."
+        @fechar="excluindo = false" @ok="excluir" />
+
       <p class="faint fim">Arion</p>
     </div>
   </div>
@@ -167,5 +196,6 @@ input[type='range'] { width: 100%; padding: 0; accent-color: var(--primary); bac
 .tecla { margin-top: 10px; }
 .full { width: 100%; margin-bottom: 6px; }
 .ok { color: var(--ok); }
+a.btn { text-decoration: none; }
 .fim { text-align: center; margin-top: 8px; }
 </style>
