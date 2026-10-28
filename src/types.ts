@@ -4,7 +4,7 @@ export interface Chord { sym: string; idx: number }
 export interface SongLine { lyric: string; chords: Chord[] }
 export interface Section { name: string; lines: SongLine[] }
 
-/** Campos da nuvem (grupo compartilhado). Vazios = só local/Drive. */
+/** Campos da nuvem (grupo compartilhado). Vazios = só local. */
 export interface CloudMeta {
   dono: string;
   donoNome: string;
@@ -63,7 +63,7 @@ export interface AppData {
   settings: AppSettings;
 }
 
-// ---- JSON bruto (como gravado no Drive / Firestore) ----
+// ---- JSON bruto (como gravado no backup / Firestore) ----
 export interface RawChord { s: string; i: number }
 export interface RawLine { l: string; c: RawChord[] }
 export interface RawSection { n: string; l: RawLine[] }

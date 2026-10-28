@@ -255,10 +255,6 @@ const fecharMenu = () => (menu.value = null);
 }
 .menu button { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 12px 18px; font-size: 15px; }
 .menu button:hover { background: var(--chip); }
-.drive {
-  max-width: 960px; margin: 0 auto 8px; padding: 0 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-}
-.drive .ms { font-size: 18px; vertical-align: -3px; }
 .sujo { color: #ffb74d; font-size: 13px; }
 .entrar { margin-top: 24px; }
 .acoes-entrar { display: flex; gap: 8px; flex-wrap: wrap; }

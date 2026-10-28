@@ -10,7 +10,7 @@ import {
 /**
  * Console do Firebase → Configurações do projeto → Seus apps → Web.
  * Não é segredo: o acesso é controlado por firebase/firestore.rules (repo do app).
- * null = nuvem ainda não configurada (o editor usa o Drive como antes).
+ * null = nuvem ainda não configurada (o editor fica só local).
  */
 const firebaseConfig: FirebaseOptions | null = {
   apiKey: 'AIzaSyC--2c2wMRa4pNx9LWBc1UR1dUJtKnNZT0',
