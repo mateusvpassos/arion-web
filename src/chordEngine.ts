@@ -106,6 +106,14 @@ export function repairChordLines(sections: Section[]): number {
     return toks.length >= 2 || toks.some((t) => /[0-9/#b(]/.test(t));
   };
   for (const sec of sections) {
+    // invisível colado do site (só em linha sem acorde: tirar caractere
+    // mudaria a posição dos acordes)
+    for (const l of sec.lines) {
+      if (!l.chords.length && /[​-‍⁠﻿]/.test(l.lyric)) {
+        l.lyric = l.lyric.replace(INVISIVEIS, '');
+        n++;
+      }
+    }
     const out: SongLine[] = [];
     for (let i = 0; i < sec.lines.length; i++) {
       const l = sec.lines[i];
@@ -344,8 +352,13 @@ function fixCifraClub(lines: string[]): string[] {
 const DIR_SECAO = new Set(['comment', 'c', 'ci', 'cb', 'comment_italic', 'comment_box', 'highlight']);
 
 // Aceita ChordPro [C]letra OU "acorde acima da letra" (Cifra Club).
+/** Caracteres invisíveis que vêm colados de sites (espaço de largura zero,
+ *  BOM...): grudados no acorde, "​D" deixava de ser acorde. */
+const INVISIVEIS = /[​-‍⁠﻿]/g;
+
 export function importText(text: string): Section[] {
-  const raw = fixCifraClub(text.replace(/\r/g, '').split('\n').map(stripTags)).map(stripResidue);
+  const raw = fixCifraClub(text.replace(INVISIVEIS, '').replace(/\r/g, '').split('\n').map(stripTags))
+    .map(stripResidue);
   const sections: Section[] = [];
   let cur: Section = { name: '', lines: [] };
   let started = false;
