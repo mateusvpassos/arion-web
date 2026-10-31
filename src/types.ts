@@ -1,4 +1,5 @@
 // Tipos do app + formato JSON IDÊNTICO ao app Flutter (chaves compactas).
+import { repairChordLines } from './chordEngine';
 
 export interface Chord { sym: string; idx: number }
 export interface SongLine { lyric: string; chords: Chord[] }
@@ -113,19 +114,23 @@ function metaToRaw(m: CloudMeta): RawMeta {
 }
 
 export function songFromRaw(j: RawSong): Song {
+  const sections = (j.sections ?? []).map((s) => ({
+    name: s.n,
+    lines: (s.l ?? []).map((l) => ({
+      lyric: l.l,
+      chords: (l.c ?? []).map((c) => ({ sym: c.s, idx: c.i })),
+    })),
+  }));
+  // acorde gravado como letra por versão antiga: mostra como acorde (o app
+  // faz o mesmo ao carregar)
+  repairChordLines(sections);
   return {
     id: j.id,
     title: j.title,
     artist: j.artist ?? '',
     key: j.key ?? 'C',
     capo: j.capo ?? 0,
-    sections: (j.sections ?? []).map((s) => ({
-      name: s.n,
-      lines: (s.l ?? []).map((l) => ({
-        lyric: l.l,
-        chords: (l.c ?? []).map((c) => ({ sym: c.s, idx: c.i })),
-      })),
-    })),
+    sections,
     tags: j.tags ?? [],
     notes: j.notes ?? '',
     bpm: j.bpm ?? 0,

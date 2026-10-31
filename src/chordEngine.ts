@@ -93,6 +93,37 @@ function mergeChordLyric(chordLine: string, lyric: string): SongLine {
   return { lyric: lyr, chords };
 }
 
+/** Linha de acordes que versão antiga gravou como LETRA (o parser não
+ *  reconhecia o acorde na época): fica sem cor e não transpõe. Junta com a
+ *  letra de baixo, como o import faria. Igual a repairChordLines do app.
+ *  Devolve quantas consertou. */
+export function repairChordLines(sections: Section[]): number {
+  let n = 0;
+  // "Em", "A", "E" sozinhos podem ser palavra: só conta com 2+ tokens ou
+  // com cara inequívoca de acorde (número, baixo, sustenido/bemol)
+  const claramenteAcorde = (l: string) => {
+    const toks = l.match(/\S+/g) ?? [];
+    return toks.length >= 2 || toks.some((t) => /[0-9/#b(]/.test(t));
+  };
+  for (const sec of sections) {
+    const out: SongLine[] = [];
+    for (let i = 0; i < sec.lines.length; i++) {
+      const l = sec.lines[i];
+      if (!l.chords.length && l.lyric.trim() && isChordLine(l.lyric) && claramenteAcorde(l.lyric)) {
+        const next = sec.lines[i + 1];
+        const juntaCom = !!next && !next.chords.length && !!next.lyric.trim() && !isChordLine(next.lyric);
+        out.push(mergeChordLyric(l.lyric, juntaCom ? next.lyric : ''));
+        if (juntaCom) i++;
+        n++;
+        continue;
+      }
+      out.push(l);
+    }
+    sec.lines = out;
+  }
+  return n;
+}
+
 // ---- colchetes inline ([G]letra) ----
 
 // "[Bis]", "[Fim]", "[Ad lib]" no meio da letra são texto, não acorde.
