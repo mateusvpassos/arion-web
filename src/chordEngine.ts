@@ -105,6 +105,25 @@ export function repairChordLines(sections: Section[]): number {
     const toks = l.match(/\S+/g) ?? [];
     return toks.length >= 2 || toks.some((t) => /[0-9/#b(]/.test(t));
   };
+  // música inteira sem nenhum acorde, mas com linha que é claramente de
+  // acorde: foi colada e o import falhou (ex.: invisível grudado em toda
+  // linha). Importa de novo o texto todo: aí acorde sozinho ("D") e
+  // "[Refrão]" também entram certo.
+  const linhas = sections.flatMap((s) => s.lines);
+  const colagemFalhou = linhas.some((l) =>
+    /[​-‍⁠﻿]/.test(l.lyric) || /^\s*\[[^\]]+\]\s*$/.test(l.lyric));
+  if (colagemFalhou && linhas.every((l) => !l.chords.length)) {
+    const limpa = (l: SongLine) => l.lyric.replace(INVISIVEIS, '');
+    const deAcorde = (l: SongLine) => limpa(l).trim() !== '' && isChordLine(limpa(l));
+    if (linhas.some((l) => deAcorde(l) && claramenteAcorde(limpa(l)))) {
+      const texto = sections
+        .map((s) => [...(s.name ? [`[${s.name}]`] : []), ...s.lines.map((l) => l.lyric)].join('\n'))
+        .join('\n\n');
+      sections.splice(0, sections.length, ...importText(texto));
+      return linhas.filter(deAcorde).length;
+    }
+  }
+
   for (const sec of sections) {
     // invisível colado do site (só em linha sem acorde: tirar caractere
     // mudaria a posição dos acordes)
@@ -354,7 +373,7 @@ const DIR_SECAO = new Set(['comment', 'c', 'ci', 'cb', 'comment_italic', 'commen
 // Aceita ChordPro [C]letra OU "acorde acima da letra" (Cifra Club).
 /** Caracteres invisíveis que vêm colados de sites (espaço de largura zero,
  *  BOM...): grudados no acorde, "​D" deixava de ser acorde. */
-const INVISIVEIS = /[​-‍⁠﻿]/g;
+const INVISIVEIS = /[\u200B-\u200D\u2060\uFEFF]/g;
 
 export function importText(text: string): Section[] {
   const raw = fixCifraClub(text.replace(INVISIVEIS, '').replace(/\r/g, '').split('\n').map(stripTags))
