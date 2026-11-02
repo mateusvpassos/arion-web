@@ -47,6 +47,29 @@ function agruparLinhas(ps: PalavraOcr[]): PalavraOcr[][] {
   return linhas;
 }
 
+/** Foto torta: uma linha de acordes sai partida em duas (o lado direito mais
+ *  baixo). Duas linhas de acorde seguidas, perto na altura e sem se sobrepor
+ *  na horizontal, viram uma. */
+function juntarAcordesPartidos(linhas: PalavraOcr[][]): PalavraOcr[][] {
+  const cy = (p: PalavraOcr) => (p.topo + p.base) / 2;
+  const media = (l: PalavraOcr[]) => l.reduce((s, p) => s + cy(p), 0) / l.length;
+  const h = mediana(linhas.flat().map((p) => p.base - p.topo));
+  const out: PalavraOcr[][] = [];
+  for (const l of linhas) {
+    const ant = out[out.length - 1];
+    if (ant && ehLinhaDeAcorde(ant) && ehLinhaDeAcorde(l)) {
+      const sobrepoe = l.some((p) => ant.some((q) => p.esq < q.dir && q.esq < p.dir));
+      if (!sobrepoe && Math.abs(media(l) - media(ant)) < h * 1.3) {
+        ant.push(...l);
+        ant.sort((a, b) => a.esq - b.esq);
+        continue;
+      }
+    }
+    out.push(l);
+  }
+  return out;
+}
+
 /** Acordes em colunas que caem na sílaba certa da letra de baixo (montada
  *  com um espaço entre palavras). */
 function linhaDeAcordes(acordes: PalavraOcr[], letra: PalavraOcr[] | null, cw: number, margem: number): string {
@@ -85,7 +108,7 @@ function linhaDeAcordes(acordes: PalavraOcr[], letra: PalavraOcr[] | null, cw: n
 export function montarCifra(palavras: PalavraOcr[]): string {
   const ps = palavras.filter((p) => p.texto.trim());
   if (!ps.length) return '';
-  const linhas = agruparLinhas(ps);
+  const linhas = juntarAcordesPartidos(agruparLinhas(ps));
   const acorde = linhas.map(ehLinhaDeAcorde);
   const larguras = linhas.flatMap((l, i) => (acorde[i] ? [] : l.filter((p) => p.texto.length > 1)
     .map((p) => (p.dir - p.esq) / p.texto.length)));
