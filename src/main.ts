@@ -12,4 +12,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-createApp(App).mount('#app')
+// v-foco: põe o cursor no campo quando ele aparece (o autofocus do HTML só vale
+// ao carregar a página, não em tela/diálogo que abre depois). v-foco="false" desliga.
+createApp(App)
+  .directive('foco', {
+    mounted(el: HTMLElement, b: { value?: unknown }) {
+      if (b.value !== false) requestAnimationFrame(() => el.focus());
+    },
+  })
+  .mount('#app')

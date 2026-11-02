@@ -171,7 +171,7 @@ const perm = ref(false);
     <!-- adicionar -->
     <div v-if="add" class="scrim" @click.self="add = false">
       <div class="sheet alta">
-        <input v-model="busca" placeholder="Buscar por nome ou trecho da letra..." class="full" autofocus />
+        <input v-model="busca" placeholder="Buscar por nome ou trecho da letra..." class="full" v-foco />
         <div v-if="tags.length" class="filtros">
           <button v-for="t in tags" :key="t" class="chip" :class="{ on: filtroTag === t }"
             @click="filtroTag = filtroTag === t ? null : t">{{ t }}</button>

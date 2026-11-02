@@ -165,6 +165,9 @@ function ouvirGrupos() {
   if (!cloud.user || !db) { pararGrupo(); cloud.grupos = []; return; }
   subGrupos = onSnapshot(
     query(collection(db, 'grupos'), where('membros', 'array-contains', eu.value)),
+    // sem isto, a confirmação do servidor de uma mudança feita aqui (convidar,
+    // renomear) não chegava: o aviso com gravação pendente é ignorado abaixo
+    { includeMetadataChanges: true },
     (q) => {
       // grupo recém-criado ainda não confirmado: abrir já daria "sem permissão"
       if (q.metadata.hasPendingWrites) return;

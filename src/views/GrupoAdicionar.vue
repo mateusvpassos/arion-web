@@ -42,7 +42,7 @@ const sublinha = (s: Song) => [s.key, s.artist, s.nomeVersao ? rotulo(s) : '', j
   <div>
     <AppBar :titulo="g ? `Adicionar a ${nomeDoGrupo(g)}` : 'Adicionar'" />
     <div class="wrap">
-      <input v-model="busca" autofocus placeholder="Buscar no acervo (título, artista ou trecho)…" class="busca" />
+      <input v-model="busca" v-foco placeholder="Buscar no acervo (título, artista ou trecho)…" class="busca" />
       <p v-if="!acervo.carregou" class="faint">Carregando o acervo…</p>
       <ul class="lista">
         <li v-for="h in hits" :key="h.song.id" :class="{ off: ja.has(h.song.id) }" @click="alterna(h.song)">

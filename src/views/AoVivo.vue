@@ -40,7 +40,7 @@ meuNome();
           <p class="muted">Crie a sessão no tablet ou celular (Arion → <b>Ao vivo</b> → Criar sessão) e
             digite aqui o <b>código</b> que aparece lá. Este computador precisa estar na mesma rede (Wi-Fi).</p>
           <form class="linha" @submit.prevent="conectar">
-            <input v-model="endereco" placeholder="Código (ex.: 4821) ou endereço" inputmode="decimal" class="grow" autofocus />
+            <input v-model="endereco" placeholder="Código (ex.: 4821) ou endereço" inputmode="decimal" class="grow" v-foco />
             <button class="btn" :disabled="live.conectando || !endereco.trim()">
               <span aria-hidden="true" class="ms">login</span>{{ live.conectando ? 'Conectando…' : 'Entrar' }}
             </button>

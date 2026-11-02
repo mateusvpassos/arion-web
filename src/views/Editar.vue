@@ -359,7 +359,7 @@ function enviar(nota: string) {
         <button class="btn text" @click="lidoDeImagem = false">Ok</button>
       </div>
 
-      <input v-model="s.title" class="titulo" placeholder="Título da música" :autofocus="props.nova" />
+      <input v-model="s.title" class="titulo" placeholder="Título da música" v-foco="!!props.nova" />
       <div class="linha">
         <input v-model="s.artist" placeholder="Artista" class="grow" />
         <label class="mini">Tom<input v-model="s.key" /></label>
@@ -478,7 +478,7 @@ function enviar(nota: string) {
         <template v-else>
           <h3>Buscar letra</h3>
           <form class="linha" @submit.prevent="procurarLetra">
-            <input v-model="termoLetra" class="grow" autofocus placeholder="Nome da música (e o artista, se souber)" />
+            <input v-model="termoLetra" class="grow" v-foco placeholder="Nome da música (e o artista, se souber)" />
             <button class="btn"><span aria-hidden="true" class="ms">search</span>Buscar</button>
           </form>
           <p v-if="carregandoLetra" class="faint">Buscando…</p>
