@@ -11,7 +11,7 @@ import {
 import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
 } from '../acervo';
-import { searchSongs, fold, fmtData } from '../core';
+import { searchSongs, fold, fmtData, APK } from '../core';
 import { usoMusicas, quando } from '../liturgia';
 import type { Song, Setlist } from '../types';
 import { emulador } from '../firebase';
@@ -158,6 +158,8 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
           Ao entrar você aceita os <a href="termos.html" target="_blank">termos de uso</a> e a
           <a href="privacidade.html" target="_blank">política de privacidade</a>.
         </p>
+        <a class="btn tonal baixar-apk" :href="APK">
+          <span aria-hidden="true" class="ms">android</span>Baixar o app para Android</a>
       </template>
       <template v-else-if="cloud.liberado === false">
         <h2 class="section-title"><span aria-hidden="true" class="ms">lock_clock</span>Acesso ainda não liberado</h2>
@@ -286,6 +288,7 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
   .estreito { display: block; }
 }
 .aceite { font-size: 12px; margin: 10px 0 0; }
+.baixar-apk { margin-top: 14px; text-decoration: none; }
 .vazio { text-align: center; padding: 32px 16px; list-style: none; }
 .vazio > .ms { font-size: 40px; color: var(--primary); }
 .vazio .title { font-weight: 650; margin: 8px 0 4px; }

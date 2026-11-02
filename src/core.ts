@@ -97,6 +97,11 @@ export function diffResumo(d: DiffLine[], contexto = 2): (DiffLine | null)[] {
   return out;
 }
 
+// APK mais recente: release do GitHub com nome fixo (publicada por
+// scripts/publicar-apk.sh no app); o "latest" aponta sempre p/ a última
+export const APK = 'https://github.com/mateusvpassos/arion/releases/latest/download/arion.apk';
+export const APK_32 = 'https://github.com/mateusvpassos/arion/releases/latest/download/arion-32bits.apk';
+
 // acorde em cima da letra: é o que se compara e se mostra
 export const textoDa = (s: Song) => cifraEmCima(s.sections);
 

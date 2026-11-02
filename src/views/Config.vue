@@ -10,6 +10,7 @@ import Prompt from '../components/Prompt.vue';
 import { cloud, ativa, pedirExclusao } from '../cloud';
 import { songToRaw, setlistToRaw, songFromRaw, setlistFromRaw } from '../types';
 import type { RawData } from '../types';
+import { APK, APK_32 } from '../core';
 
 const NOMES: Record<string, string> = {
   PageDown: 'Page Down', PageUp: 'Page Up', ArrowDown: 'Seta ↓', ArrowUp: 'Seta ↑',
@@ -152,6 +153,17 @@ async function importar(e: Event) {
           {{ cloud.grupo?.nome ?? 'sua biblioteca' }} (não apaga nada).</p>
         <p v-if="aviso" class="ok">{{ aviso }}</p>
         <button class="btn text" @click="abrir({ nome: 'atividade' })">Ver histórico</button>
+      </section>
+
+      <section class="card">
+        <h3 class="section-title"><span aria-hidden="true" class="ms">android</span>App para Android</h3>
+        <p class="faint dica">Baixe e abra o arquivo no celular ou tablet. Na primeira vez o Android pede p/ permitir
+          instalar "desta fonte"; o Play Protect pode avisar que não conhece o app — é só tocar em "Instalar mesmo
+          assim". Versão nova instala por cima, sem perder nada.</p>
+        <div class="linha">
+          <a class="btn" :href="APK"><span aria-hidden="true" class="ms">download</span>Baixar o app</a>
+          <a class="btn text" :href="APK_32">Celular antigo (se o outro der "app não instalado")</a>
+        </div>
       </section>
 
       <section class="card">
