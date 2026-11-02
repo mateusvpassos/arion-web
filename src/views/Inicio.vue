@@ -6,7 +6,7 @@ import Prompt from '../components/Prompt.vue';
 import { abrir, prefs } from '../nav';
 import * as be from '../backend';
 import {
-  cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, conferirLiberacao, totalPendentesOutros,
+  cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, conferirLiberacao, totalPendentesOutros, sair,
 } from '../cloud';
 import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
@@ -165,6 +165,8 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
           Ao ser adicionado, o seu acesso é liberado.</p>
         <div class="acoes-entrar">
           <button class="btn" @click="conferirLiberacao()"><span aria-hidden="true" class="ms">refresh</span>Já me adicionaram</button>
+          <!-- entrou com a conta errada: sem isto não havia como trocar -->
+          <button class="btn text" @click="sair()"><span aria-hidden="true" class="ms">logout</span>Trocar de conta</button>
         </div>
       </template>
       <p v-else class="muted">Carregando a sua biblioteca…</p>
