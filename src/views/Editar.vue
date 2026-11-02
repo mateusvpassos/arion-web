@@ -346,10 +346,10 @@ function enviar(nota: string) {
     </AppBar>
     <div class="wrap">
       <div v-if="sugestao" class="banner">
-        Esta música é de {{ nomeDe(origem!.dono) }}. O que você mudar vai como sugestão —
-        {{ nomeDe(origem!.dono) }} aceita ou não.
+        Esta música é de {{ origem!.donoNome || nomeDe(origem!.dono) }}. O que você mudar vai como sugestão —
+        {{ origem!.donoNome || nomeDe(origem!.dono) }} aceita ou não.
       </div>
-      <div v-if="enviado" class="banner ok">Sugestão enviada — {{ nomeDe(origem!.dono) }} decide se aceita.</div>
+      <div v-if="enviado" class="banner ok">Sugestão enviada — {{ origem!.donoNome || nomeDe(origem!.dono) }} decide se aceita.</div>
       <p v-if="aviso" class="okt">{{ aviso }}</p>
       <div v-if="lendoImagem !== null" class="banner">
         Lendo a imagem… {{ Math.round(lendoImagem * 100) }}% (na primeira vez baixa o leitor, demora um pouco mais)

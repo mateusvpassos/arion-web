@@ -3,7 +3,9 @@ import { ref } from 'vue';
 import AppBar from '../components/AppBar.vue';
 import { abrir } from '../nav';
 import { computed } from 'vue';
-import { eu, paraDecidir as pdGrupo, minhas as mGrupo, type Sugestao } from '../cloud';
+import {
+  eu, cloud, paraDecidir as pdGrupo, minhas as mGrupo, pendentesOutros, escolherGrupo, nomeDoGrupo, type Sugestao,
+} from '../cloud';
 import { paraDecidirA, minhasA } from '../acervo';
 import { fmtQuando } from '../core';
 import { statusTexto, statusIcone } from '../sugestoes';
@@ -12,6 +14,8 @@ const porData = (a: Sugestao, b: Sugestao) => (b.em?.getTime() ?? 0) - (a.em?.ge
 // grupo + acervo numa lista só
 const paraDecidir = computed(() => [...pdGrupo.value, ...paraDecidirA.value].sort(porData));
 const minhas = computed(() => [...mGrupo.value, ...minhasA.value].sort(porData));
+// grupos que não estão em uso, com sugestão esperando por mim
+const outros = computed(() => cloud.grupos.filter((g) => (pendentesOutros[g.id] ?? 0) > 0));
 const aba = ref<'decidir' | 'minhas'>(paraDecidir.value.length || !minhas.value.length ? 'decidir' : 'minhas');
 
 </script>
@@ -25,6 +29,10 @@ const aba = ref<'decidir' | 'minhas'>(paraDecidir.value.length || !minhas.value.
       <button :class="{ on: aba === 'minhas' }" @click="aba = 'minhas'">Minhas ({{ minhas.length }})</button>
     </nav>
     <div class="wrap">
+      <div v-for="g in (aba === 'decidir' ? outros : [])" :key="g.id" class="banner outro-grupo">
+        <span>{{ pendentesOutros[g.id] }} sugestão(ões) esperando você em <b>{{ nomeDoGrupo(g) }}</b></span>
+        <button class="btn text" @click="escolherGrupo(g)">Abrir esse grupo</button>
+      </div>
       <ul class="list">
         <li v-for="x in (aba === 'decidir' ? paraDecidir : minhas)" :key="x.id" class="row"
           @click="abrir({ nome: 'sugestao', id: x.id })">
@@ -47,6 +55,7 @@ const aba = ref<'decidir' | 'minhas'>(paraDecidir.value.length || !minhas.value.
 </template>
 
 <style scoped>
+.outro-grupo { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
 .wrap { max-width: 960px; margin: 0 auto; padding: 0 12px 40px; }
 .row .ms { margin: 0 4px; }
 </style>

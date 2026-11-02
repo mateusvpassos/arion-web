@@ -1,6 +1,6 @@
 // Grupo compartilhado no Firestore — mesmo modelo do app (lib/cloud/cloud_state.dart):
 // quem cria é o dono, os outros sugerem, toda gravação vira uma versão.
-import { reactive, computed } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import {
   GoogleAuthProvider, onAuthStateChanged, signInWithCredential, signInWithPopup, signOut, updateProfile,
   type User,
@@ -505,6 +505,32 @@ export const naoEstaoNoGrupo = (songs: Song[], setlists: Setlist[]) => ({
 });
 
 // ---------------- sugestões ----------------
+
+// ---- sugestões nos OUTROS grupos (não o em uso) ----
+// Só a contagem das que esperam por mim (sou o dono da música): p/ decidir,
+// abre o grupo. Antes elas ficavam invisíveis até trocar de grupo.
+export const pendentesOutros = reactive<Record<string, number>>({});
+const subsOutros: Record<string, Unsubscribe> = {};
+function ouvirPendentesOutros() {
+  const ids = new Set(cloud.grupos.filter((g) => g.id !== cloud.grupo?.id).map((g) => g.id));
+  for (const id of Object.keys(subsOutros)) {
+    if (ids.has(id) && eu.value) continue;
+    subsOutros[id]();
+    delete subsOutros[id];
+    delete pendentesOutros[id];
+  }
+  if (!db || !eu.value) return;
+  for (const g of cloud.grupos) {
+    if (!ids.has(g.id) || subsOutros[g.id]) continue;
+    subsOutros[g.id] = onSnapshot(
+      query(colDe(g, 'sugestoes'), where('status', '==', 'pendente'), where('dono', '==', eu.value)),
+      (q) => { pendentesOutros[g.id] = q.size; },
+      () => { /* sem permissão (saiu do grupo): ignora */ },
+    );
+  }
+}
+watch(() => [cloud.grupos.map((g) => g.id).join(), cloud.grupo?.id, eu.value], ouvirPendentesOutros);
+export const totalPendentesOutros = computed(() => Object.values(pendentesOutros).reduce((a, b) => a + b, 0));
 
 export const paraDecidir = computed(() => cloud.sugestoes.filter((x) => {
   if (x.status !== 'pendente' || x.por === eu.value) return false;

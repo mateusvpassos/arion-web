@@ -243,7 +243,7 @@ const sub = computed(() => {
     s.bpm ? `${s.bpm} BPM` : '',
     lista.value.length > 1 ? `${idx.value + 1}/${lista.value.length}` : '',
     doAcervo.value ? `acervo geral${s.dono && s.dono !== eu.value ? ` · de ${nomeA(s.dono)}` : ''}`
-      : ativa.value && s.dono && s.dono !== eu.value ? `de ${nomeDe(s.dono)}` : '',
+      : ativa.value && s.dono && s.dono !== eu.value ? `de ${s.donoNome || nomeDe(s.dono)}` : '',
     live.ativo ? `ao vivo: ${live.reconectando ? 'reconectando…' : live.modo === 'segue' ? 'seguindo' : live.modo}` : '',
   ].filter(Boolean).join('  •  ');
 });

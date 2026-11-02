@@ -5,7 +5,9 @@ import AppBar from '../components/AppBar.vue';
 import Prompt from '../components/Prompt.vue';
 import { abrir, prefs } from '../nav';
 import * as be from '../backend';
-import { cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, conferirLiberacao } from '../cloud';
+import {
+  cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, conferirLiberacao, totalPendentesOutros,
+} from '../cloud';
 import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
 } from '../acervo';
@@ -110,7 +112,7 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
       </button>
       <button v-if="cloud.user" class="icon-btn" title="Sugestões" aria-label="Sugestões" @click="abrir({ nome: 'sugestoes' })">
         <span aria-hidden="true" class="ms">inbox</span>
-        <span v-if="paraDecidir.length + paraDecidirA.length" class="dot">{{ paraDecidir.length + paraDecidirA.length }}</span>
+        <span v-if="paraDecidir.length + paraDecidirA.length + totalPendentesOutros" class="dot">{{ paraDecidir.length + paraDecidirA.length + totalPendentesOutros }}</span>
       </button>
       <button v-if="ativa" class="icon-btn largo" title="Atividade recente" aria-label="Atividade recente" @click="abrir({ nome: 'atividade' })">
         <span aria-hidden="true" class="ms">history</span>
