@@ -3,8 +3,10 @@
 import { ref } from 'vue';
 import AppBar from '../components/AppBar.vue';
 import Prompt from '../components/Prompt.vue';
+import AcessoPendente from '../components/AcessoPendente.vue';
+import PedidosAcesso from '../components/PedidosAcesso.vue';
 import {
-  cloud, eu, nomeDe, entrar, sair, criarGrupo, disponivel, entrarTeste, ehMinha, nomeDoGrupo, conferirLiberacao,
+  cloud, eu, nomeDe, entrar, sair, criarGrupo, disponivel, entrarTeste, ehMinha, nomeDoGrupo,
 } from '../cloud';
 import { emulador } from '../firebase';
 import { abrir } from '../nav';
@@ -52,14 +54,15 @@ const base = import.meta.env.BASE_URL;
 
         <div v-if="cloud.liberado === false" class="card">
           <h3 class="section-title"><span aria-hidden="true" class="ms">lock_clock</span>Acesso ainda não liberado</h3>
-          <p>Peça p/ alguém que já usa o Arion te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
-            Ao ser adicionado, o seu acesso é liberado.</p>
-          <button class="btn" @click="conferirLiberacao()"><span aria-hidden="true" class="ms">refresh</span>Já me adicionaram</button>
+          <AcessoPendente />
         </div>
 
-        <p v-else-if="!cloud.grupos.length" class="muted">Preparando a sua biblioteca…</p>
+        <PedidosAcesso v-if="cloud.liberado" />
 
-        <div v-else class="card">
+        <template v-if="cloud.liberado !== false">
+          <p v-if="!cloud.grupos.length" class="muted">Preparando a sua biblioteca…</p>
+
+          <div v-else class="card">
           <h3 class="section-title"><span aria-hidden="true" class="ms">groups</span>Seus grupos</h3>
           <p class="faint small">
             Cada grupo tem as suas músicas, repertórios e pessoas. O que está em uso aparece na tela inicial.
@@ -78,7 +81,8 @@ const base = import.meta.env.BASE_URL;
             </li>
           </ul>
           <button class="btn" @click="criando = true"><span aria-hidden="true" class="ms">group_add</span>Novo grupo</button>
-        </div>
+          </div>
+        </template>
 
         <div class="card">
           <h3 class="section-title"><span aria-hidden="true" class="ms">public</span>Acervo geral</h3>

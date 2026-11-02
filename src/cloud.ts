@@ -58,7 +58,13 @@ export const cloud = reactive({
   erro: null as string | null,
   /** pode usar a nuvem? null = ainda conferindo (ou sem internet na 1ª vez) */
   liberado: null as boolean | null,
+  /** quem não foi liberado: null = conferindo, false = não pediu, true = pediu */
+  pedi: null as boolean | null,
+  /** dono do app: pedidos de acesso esperando */
+  pedidos: [] as PedidoAcesso[],
 });
+
+export interface PedidoAcesso { email: string; nome: string }
 
 export const ativa = computed(() => !!cloud.user && !!cloud.grupo);
 export const eu = computed(() => cloud.user?.email ?? '');
@@ -112,7 +118,66 @@ export async function conferirLiberacao(reabrir = true) {
     try { cloud.liberado = (await getDoc(doc(db, 'liberados', e))).exists(); }
     catch { cloud.liberado = null; }
   }
+  ouvirAcesso();
   if (reabrir) ouvirGrupos();
+}
+
+// ---------------- pedido de acesso ----------------
+// Quem não foi liberado pede com um toque (pedidos/{email}); o dono do app vê
+// a lista e libera. Liberado, a tela de quem pediu abre sozinha.
+
+export const souAdmin = computed(() => ADMINS.has(eu.value));
+let subLiberacao: Unsubscribe | null = null, subPedidos: Unsubscribe | null = null;
+
+function ouvirAcesso() {
+  subLiberacao?.(); subLiberacao = null;
+  subPedidos?.(); subPedidos = null;
+  cloud.pedidos = [];
+  const e = eu.value;
+  if (!db || !e) return;
+  if (cloud.liberado === false) {
+    cloud.pedi = null;
+    getDoc(doc(db, 'pedidos', e)).then((d) => { cloud.pedi = d.exists(); }, () => {});
+    subLiberacao = onSnapshot(doc(db, 'liberados', e), (d) => { if (d.exists()) conferirLiberacao(); }, () => {});
+  }
+  // liberado (pelo pedido ou por convite): o pedido que sobrou sai da lista
+  if (cloud.liberado === true && !souAdmin.value) {
+    const ref = doc(db, 'pedidos', e);
+    getDoc(ref).then((d) => {
+      if (d.exists()) { const b = writeBatch(db!); b.delete(ref); b.commit().catch(() => {}); }
+    }, () => {});
+  }
+  if (souAdmin.value) {
+    subPedidos = onSnapshot(query(collection(db, 'pedidos'), orderBy('em')), (q) => {
+      cloud.pedidos = q.docs.map((d) => ({ email: d.id, nome: String(d.data().nome ?? '') }));
+    }, () => {});
+  }
+}
+
+export async function pedirAcesso() {
+  if (!db || !cloud.user) return;
+  cloud.erro = null;
+  try {
+    await setDoc(doc(db, 'pedidos', eu.value), { em: serverTimestamp(), nome: cloud.user.nome.slice(0, 80) });
+    cloud.pedi = true;
+  } catch (e) { falhou(e); }
+}
+
+/** Libera quem pediu (como convidar, mas sem grupo: a pessoa ganha a
+ *  biblioteca pessoal e você a convida p/ um grupo quando quiser). */
+export async function liberarPedido(p: PedidoAcesso) {
+  if (!db) return;
+  const b = writeBatch(db);
+  b.set(doc(db, 'liberados', p.email), { por: eu.value, em: serverTimestamp() });
+  b.delete(doc(db, 'pedidos', p.email));
+  await b.commit().catch(falhou);
+}
+
+export async function recusarPedido(p: PedidoAcesso) {
+  if (!db) return;
+  const b = writeBatch(db);
+  b.delete(doc(db, 'pedidos', p.email));
+  await b.commit().catch(falhou);
 }
 
 export async function entrar() {

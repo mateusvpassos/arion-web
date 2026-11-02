@@ -6,8 +6,9 @@ import Prompt from '../components/Prompt.vue';
 import { abrir, prefs } from '../nav';
 import * as be from '../backend';
 import {
-  cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, conferirLiberacao, totalPendentesOutros, sair,
+  cloud, ativa, eu, nomeDe, paraDecidir, disponivel, entrar, nomeDoGrupo, totalPendentesOutros,
 } from '../cloud';
+import AcessoPendente from '../components/AcessoPendente.vue';
 import {
   acervo, paraDecidirA, obras, obraDe, rotulo, nomeDe as nomeA, copiaDaObra, puxar, religar, podeEditarA,
 } from '../acervo';
@@ -119,6 +120,8 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
       </button>
       <button v-if="disponivel" class="icon-btn largo" title="Grupos" aria-label="Grupos" @click="abrir({ nome: 'grupo' })">
         <span aria-hidden="true" class="ms">{{ ativa ? 'group' : 'cloud_off' }}</span>
+        <!-- dono do app: pedidos de acesso esperando -->
+        <span v-if="cloud.pedidos.length" class="dot">{{ cloud.pedidos.length }}</span>
       </button>
       <button class="icon-btn" :class="{ on: live.ativo }" title="Ao vivo" aria-label="Ao vivo" @click="abrir({ nome: 'aovivo' })">
         <span aria-hidden="true" class="ms">cell_tower</span>
@@ -163,13 +166,7 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
       </template>
       <template v-else-if="cloud.liberado === false">
         <h2 class="section-title"><span aria-hidden="true" class="ms">lock_clock</span>Acesso ainda não liberado</h2>
-        <p>Peça p/ alguém que já usa o Arion te adicionar num grupo (pelo e-mail {{ cloud.user.email }}).
-          Ao ser adicionado, o seu acesso é liberado.</p>
-        <div class="acoes-entrar">
-          <button class="btn" @click="conferirLiberacao()"><span aria-hidden="true" class="ms">refresh</span>Já me adicionaram</button>
-          <!-- entrou com a conta errada: sem isto não havia como trocar -->
-          <button class="btn text" @click="sair()"><span aria-hidden="true" class="ms">logout</span>Trocar de conta</button>
-        </div>
+        <AcessoPendente />
       </template>
       <p v-else class="muted">Carregando a sua biblioteca…</p>
     </div></div>
