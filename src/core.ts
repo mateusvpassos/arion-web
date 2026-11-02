@@ -1,7 +1,7 @@
 // Portas de lib/core/{search,diff}.dart, transposeSong e o resumo de mudanças
 // (models/audit.dart) — mesmo comportamento do app.
 import type { Song, Section } from './types';
-import { transposeChord, serializeSections } from './chordEngine';
+import { transposeChord, cifraEmCima } from './chordEngine';
 
 // ---------------- transposição ----------------
 
@@ -97,7 +97,8 @@ export function diffResumo(d: DiffLine[], contexto = 2): (DiffLine | null)[] {
   return out;
 }
 
-export const textoDa = (s: Song) => serializeSections(s.sections);
+// acorde em cima da letra: é o que se compara e se mostra
+export const textoDa = (s: Song) => cifraEmCima(s.sections);
 
 function hash(s: Song): string {
   return JSON.stringify(s.sections.map((sec) => [sec.name, sec.lines.map((l) => [l.lyric, l.chords])]));

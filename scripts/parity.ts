@@ -2,7 +2,7 @@
 // Uso: rode antes `flutter test test/parser_parity_test.dart` no arion,
 // depois `node scripts/parity.ts`.
 import { readFileSync } from 'node:fs';
-import { importText, detectMeta, suggestKey, transposeChord } from '../src/chordEngine.ts';
+import { importText, detectMeta, suggestKey, transposeChord, cifraEmCima } from '../src/chordEngine.ts';
 
 const APP = '../arion';
 const cases: string[] = JSON.parse(readFileSync(`${APP}/test/fixtures/parser_cases.json`, 'utf8'));
@@ -26,13 +26,14 @@ const web = {
     return `${s(m.title)}|${s(m.artist)}|${s(m.key)}|${s(m.capo)}`;
   }),
   keys: cases.map((c) => `${suggestKey(importText(c))}`),
+  emCima: cases.map((c) => cifraEmCima(importText(c))),
   transp: ['D7/9', 'A7/13', 'Am7/G', 'F#m7(b5)/E', 'Cb', 'E#', 'Bø', '(2x)', 'N.C.', '|', 'B7(4/9)', 'Bb7M(9)'].flatMap(
     (c) => [-3, 1, 2].map((s) => transposeChord(c, s, false)),
   ),
 };
 
 let fails = 0;
-for (const k of ['dumps', 'meta', 'keys', 'transp'] as const) {
+for (const k of ['dumps', 'meta', 'keys', 'emCima', 'transp'] as const) {
   (web[k] as string[]).forEach((v, i) => {
     if (v !== dart[k][i]) {
       fails++;

@@ -13,7 +13,7 @@ import { sugerir, nomeDe as nomeGrupo } from '../cloud';
 import { acervo, salvarA, sugerirA, podeEditarA, nomeDe as nomeAcervo, rotulo } from '../acervo';
 import { rascunho } from '../rascunho';
 import {
-  serializeSections, importText, suggestKey, detectMeta, isChordSymbol, campoHarmonico, copiarAcordes,
+  cifraEmCima, importText, suggestKey, detectMeta, isChordSymbol, campoHarmonico, copiarAcordes,
 } from '../chordEngine';
 import { buscarLetras, paraSecoes, type LetraAchada } from '../letras';
 import type { Song, Section, SongLine, Chord } from '../types';
@@ -23,7 +23,15 @@ const props = defineProps<{ id: string; nova?: boolean; acervo?: boolean }>();
 const origem = props.acervo ? acervo.musicas[props.id] : props.nova ? rascunho.value : be.songById(props.id);
 const nomeDe = (e: string) => (props.acervo ? nomeAcervo(e) : nomeGrupo(e));
 const s = ref<Song | null>(origem ? JSON.parse(JSON.stringify(origem)) : null);
-const texto = ref(origem ? serializeSections(origem.sections) : '');
+// O texto mostra o acorde em cima da letra. Se não foi mexido, a cifra fica
+// como estava: a ida e volta pelo texto pode mover um acorde grudado no outro.
+let gerado = { texto: '', secs: '[]' };
+function gerar(sections: Section[]): string {
+  gerado = { texto: cifraEmCima(sections), secs: JSON.stringify(sections) };
+  return gerado.texto;
+}
+const secoesDe = (t: string): Section[] => (t === gerado.texto ? JSON.parse(gerado.secs) : importText(t));
+const texto = ref(origem ? gerar(origem.sections) : '');
 const tag = ref('');
 const sugestao = computed(() => !props.nova && !!origem &&
   !(props.acervo ? podeEditarA(origem) : be.podeEditarSong(origem)));
@@ -32,7 +40,7 @@ const enviado = ref(false);
 const aviso = ref('');
 const avisar = (t: string) => { aviso.value = t; setTimeout(() => (aviso.value = ''), 2500); };
 
-const previa = computed<Song | null>(() => (s.value ? { ...s.value, sections: importText(texto.value) } : null));
+const previa = computed<Song | null>(() => (s.value ? { ...s.value, sections: secoesDe(texto.value) } : null));
 
 function addTag() {
   const t = tag.value.trim().toLowerCase();
@@ -70,7 +78,7 @@ function desfazer() {
   if (t === undefined) return;
   desfazendo = true;
   texto.value = t;
-  if (modo.value === 'acordes') secs.value = importText(t);
+  if (modo.value === 'acordes') secs.value = secoesDe(t);
   nextTick(() => (desfazendo = false));
 }
 
@@ -83,18 +91,18 @@ async function copiar() {
 const modo = ref<'texto' | 'acordes'>('texto');
 const secs = ref<Section[]>([]);
 function setModo(m: 'texto' | 'acordes') {
-  if (m === 'acordes') secs.value = importText(texto.value);
+  if (m === 'acordes') secs.value = secoesDe(texto.value);
   modo.value = m;
   armado.value = '';
 }
 // toda mudança no visual vira texto (é o texto que salva)
 function mudou() {
   clearTimeout(rajada); rajada = 0;
-  texto.value = serializeSections(secs.value);
+  texto.value = gerar(secs.value);
 }
 
 // digitando a letra: agrupa no desfazer como no modo texto
-const mudouLetra = () => { texto.value = serializeSections(secs.value); };
+const mudouLetra = () => { texto.value = gerar(secs.value); };
 
 const PALETA = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'Cm', 'Dm', 'Em', 'Fm', 'Gm', 'Am', 'Bm',
   'C7', 'D7', 'E7', 'G7', 'A7', 'B7', 'Cmaj7', 'Dm7', 'Em7', 'Gsus4'];
@@ -284,7 +292,7 @@ async function procurarLetra() {
 }
 function usarLetra(l: LetraAchada) {
   const x = s.value!;
-  const temLetra = importText(texto.value).some((sec) => sec.lines.some((li) => li.lyric.trim()));
+  const temLetra = secoesDe(texto.value).some((sec) => sec.lines.some((li) => li.lyric.trim()));
   if (temLetra && !confirm('Trocar a letra? A letra e os acordes que já estão aqui saem.')) return;
   buscandoLetra.value = false;
   secs.value = paraSecoes(l.letra);
@@ -297,7 +305,7 @@ function usarLetra(l: LetraAchada) {
 
 function montar(): Song {
   const x = s.value!;
-  x.sections = importText(texto.value);
+  x.sections = secoesDe(texto.value);
   // "Tom: G", "Capo 2", {title: ...} no texto colado preenchem os campos
   const meta = detectMeta(texto.value);
   if (meta.title && (!x.title.trim() || x.title === 'Nova música')) x.title = meta.title;

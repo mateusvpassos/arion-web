@@ -211,6 +211,35 @@ export function serializeSections(sections: Section[]): string {
     .join('\n\n');
 }
 
+/** Texto "acorde em cima da letra" (como nos sites de cifra), que o
+ *  importText lê de volta. Bem mais fácil de ler que o [G] no meio da letra:
+ *  é o do modo texto do editor, da comparação e do copiar. */
+export function cifraEmCima(sections: Section[]): string {
+  const out: string[] = [];
+  for (const s of sections) {
+    if (out.length) out.push('');
+    if (s.name) out.push('#' + s.name);
+    s.lines.forEach((l, k) => {
+      const letra = l.lyric.trimEnd();
+      if (!l.chords.length) { out.push(letra); return; }
+      let acordes = '';
+      for (const c of [...l.chords].sort((a, b) => a.idx - b.idx)) {
+        let col = Math.max(0, c.idx);
+        // acorde grudado no anterior: empurra (no texto, um espaço entre)
+        if (acordes && col <= acordes.length) col = acordes.length + 1;
+        acordes = acordes.padEnd(col) + c.sym;
+      }
+      if (letra.trim()) { out.push(acordes, letra); return; }
+      // linha só de acordes seguida de letra sem acorde: no formato em cima
+      // as duas se juntariam ao reimportar; vai como [G] [D]
+      const prox = s.lines[k + 1];
+      const junta = !!prox && !prox.chords.length && !!prox.lyric.trim();
+      out.push(junta ? serializeLine(l).trimEnd() : acordes);
+    });
+  }
+  return out.join('\n');
+}
+
 // ---- limpeza do texto colado ----
 
 const INLINE_CHORD = /\[[A-G][#b]?[^\]]*\]/;
