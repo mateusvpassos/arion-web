@@ -3,7 +3,7 @@
 // sem permissão: salvar vira sugestão, como no app.
 // Dois modos, como no app: Texto (colar/digitar a cifra) e Acordes (arrastar
 // acordes da paleta p/ cima da sílaba, mover, trocar, organizar seções).
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import AppBar from '../components/AppBar.vue';
 import ChordChart from '../components/ChordChart.vue';
 import Prompt from '../components/Prompt.vue';
@@ -226,6 +226,45 @@ const letras = ref<LetraAchada[] | null>(null);
 const vendoLetra = ref<LetraAchada | null>(null);
 const carregandoLetra = ref(false);
 const erroLetra = ref('');
+// ---- importar de imagem (print ou foto): OCR no navegador ----
+const arquivoImg = ref<HTMLInputElement | null>(null);
+const lendoImagem = ref<number | null>(null); // progresso 0..1; null = parado
+async function lerImagem(img: Blob) {
+  if (lendoImagem.value !== null) return;
+  const temAlgo = texto.value.trim() !== '';
+  if (temAlgo && !confirm('Trocar a cifra atual pelo que for lido da imagem?')) return;
+  lendoImagem.value = 0;
+  try {
+    const { lerCifraDeImagem } = await import('../ocrCifra');
+    const lido = await lerCifraDeImagem(img, (p) => (lendoImagem.value = p));
+    if (!lido.trim()) { avisar('Não achei texto nessa imagem'); return; }
+    texto.value = lido;
+    modo.value = 'texto';
+    armado.value = '';
+    lidoDeImagem.value = true;
+  } catch (e) {
+    avisar(`Não deu p/ ler a imagem: ${(e as Error).message}`);
+  } finally {
+    lendoImagem.value = null;
+  }
+}
+const lidoDeImagem = ref(false);
+function escolheuImagem(e: Event) {
+  const f = (e.target as HTMLInputElement).files?.[0];
+  (e.target as HTMLInputElement).value = '';
+  if (f) lerImagem(f);
+}
+// colar um print (Ctrl+V) em qualquer lugar do editor também lê
+function aoColar(e: ClipboardEvent) {
+  const item = [...(e.clipboardData?.items ?? [])].find((i) => i.type.startsWith('image/'));
+  const f = item?.getAsFile();
+  if (!f) return;
+  e.preventDefault();
+  lerImagem(f);
+}
+onMounted(() => document.addEventListener('paste', aoColar));
+onUnmounted(() => document.removeEventListener('paste', aoColar));
+
 function abrirBuscaLetra() {
   const t = s.value!.title.trim();
   termoLetra.value = [t && t !== 'Nova música' ? t : '', s.value!.artist.trim()].filter(Boolean).join(' ');
@@ -295,6 +334,9 @@ function enviar(nota: string) {
     <AppBar :titulo="sugestao ? 'Sugerir mudança' : props.nova ? 'Nova música' : 'Editar'"
       :sub="props.acervo && origem ? `Acervo — ${rotulo(origem)}` : ''">
       <button class="icon-btn" title="Desfazer" aria-label="Desfazer" :disabled="!historico.length" @click="desfazer"><span aria-hidden="true" class="ms">undo</span></button>
+      <button class="icon-btn" title="Importar de imagem (ou cole um print com Ctrl+V)" aria-label="Importar de imagem"
+        :disabled="lendoImagem !== null" @click="arquivoImg?.click()"><span aria-hidden="true" class="ms">document_scanner</span></button>
+      <input ref="arquivoImg" type="file" accept="image/*" hidden @change="escolheuImagem" />
       <button class="icon-btn" title="Buscar letra" aria-label="Buscar letra" @click="abrirBuscaLetra"><span aria-hidden="true" class="ms">lyrics</span></button>
       <button class="icon-btn" title="Copiar como texto" aria-label="Copiar como texto" @click="copiar"><span aria-hidden="true" class="ms">content_copy</span></button>
       <button class="btn text" @click="voltar">Cancelar</button>
@@ -309,6 +351,13 @@ function enviar(nota: string) {
       </div>
       <div v-if="enviado" class="banner ok">Sugestão enviada — {{ nomeDe(origem!.dono) }} decide se aceita.</div>
       <p v-if="aviso" class="okt">{{ aviso }}</p>
+      <div v-if="lendoImagem !== null" class="banner">
+        Lendo a imagem… {{ Math.round(lendoImagem * 100) }}% (na primeira vez baixa o leitor, demora um pouco mais)
+      </div>
+      <div v-else-if="lidoDeImagem" class="banner">
+        Lido da imagem: confira os acordes e a letra na prévia antes de salvar.
+        <button class="btn text" @click="lidoDeImagem = false">Ok</button>
+      </div>
 
       <input v-model="s.title" class="titulo" placeholder="Título da música" :autofocus="props.nova" />
       <div class="linha">
