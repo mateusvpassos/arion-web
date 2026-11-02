@@ -65,7 +65,7 @@ const base = import.meta.env.BASE_URL;
             Cada grupo tem as suas músicas, repertórios e pessoas. O que está em uso aparece na tela inicial.
           </p>
           <ul class="grupos">
-            <li v-for="g in cloud.grupos" :key="g.id" @click="abrir({ nome: 'grupoDetalhe', id: g.id })">
+            <li v-for="g in cloud.grupos" :key="g.id" v-clicavel @click="abrir({ nome: 'grupoDetalhe', id: g.id })">
               <span aria-hidden="true" class="ms">{{ ehMinha(g) ? 'person' : 'groups' }}</span>
               <div class="grow">
                 <div>{{ nomeDoGrupo(g) }}</div>

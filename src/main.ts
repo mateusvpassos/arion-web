@@ -20,4 +20,18 @@ createApp(App)
       if (b.value !== false) requestAnimationFrame(() => el.focus());
     },
   })
+  // item de lista clicável (<li @click>): o teclado não chegava nele. Tab
+  // foca, Enter/Espaço abre — só quando o foco é o próprio item, não um botão
+  // dentro dele.
+  .directive('clicavel', {
+    mounted(el: HTMLElement) {
+      el.tabIndex = 0;
+      el.setAttribute('role', 'button');
+      el.addEventListener('keydown', (e) => {
+        if (e.target !== el || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        el.click();
+      });
+    },
+  })
   .mount('#app')

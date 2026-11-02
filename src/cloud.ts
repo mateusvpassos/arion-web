@@ -171,11 +171,17 @@ function ouvirGrupos() {
     (q) => {
       // grupo recém-criado ainda não confirmado: abrir já daria "sem permissão"
       if (q.metadata.hasPendingWrites) return;
-      // sem grupo nenhum (confirmado pelo servidor): cria a biblioteca pessoal
-      if (!q.docs.length && !q.metadata.fromCache && !criando && cloud.liberado === true) {
+      // sem a minha biblioteca pessoal (confirmado pelo servidor): cria. Quem
+      // entrou por convite também ganha a sua (antes só tinha o grupo).
+      const temMinha = q.docs.some((d) => {
+        const j = d.data();
+        return j.dono === eu.value && !j.apagado &&
+          (j.pessoal === true || (j.pessoal == null && String(j.nome ?? '').startsWith('Biblioteca de ')));
+      });
+      if (!temMinha && !q.metadata.fromCache && !criando && cloud.liberado === true) {
         criando = true;
         criarGrupo(`Biblioteca de ${cloud.user!.nome}`, true).finally(() => { criando = false; });
-        return;
+        if (!q.docs.length) return;
       }
       cloud.grupos = q.docs
         .filter((d) => !d.data().apagado) // apagado pelo dono (as regras não deixam apagar o doc)

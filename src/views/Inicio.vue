@@ -188,7 +188,7 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
             <button class="btn text" @click="religar">Tentar de novo</button></p>
           <p v-if="aviso" class="ok">{{ aviso }}</p>
           <ul class="list">
-            <li v-for="h in hits" :key="h.song.id" class="row" @click="tocar(h.song)">
+            <li v-for="h in hits" :key="h.song.id" v-clicavel class="row" @click="tocar(h.song)">
               <div class="key-badge">{{ h.song.key }}</div>
               <div class="grow">
                 <div class="title">{{ h.song.title }}</div>
@@ -227,7 +227,7 @@ const vazia = computed(() => !busca.value && (prefs.aba === 'songs' ? acervo.car
         </template>
 
         <ul v-else class="list">
-          <li v-for="sl in reps" :key="sl.id" class="row" @click="abrir({ nome: 'repertorio', id: sl.id })">
+          <li v-for="sl in reps" :key="sl.id" v-clicavel class="row" @click="abrir({ nome: 'repertorio', id: sl.id })">
             <span aria-hidden="true" class="ms rep-ic">queue_music</span>
             <div class="grow">
               <div class="title">{{ sl.name }}</div>

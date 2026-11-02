@@ -52,7 +52,7 @@ function confirmar() {
         <p v-if="!lista" class="faint">Carregando…</p>
         <p v-else-if="!lista.length" class="faint">Sem revisões guardadas ainda.</p>
         <ul class="list">
-          <li v-for="v in lista ?? []" :key="v.id" class="row" @click="sel = v; modo = 'diff'">
+          <li v-for="v in lista ?? []" :key="v.id" v-clicavel class="row" @click="sel = v; modo = 'diff'">
             <span class="n" :class="{ atual: v.n === song?.versao }">{{ v.n }}</span>
             <div class="grow">
               <div class="title small">{{ v.porNome || v.por }} {{ v.acao }}</div>

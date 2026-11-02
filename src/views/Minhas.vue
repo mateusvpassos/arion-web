@@ -48,7 +48,7 @@ function novaMusica() {
         <input v-model="busca" placeholder="Buscar (nome, artista ou trecho da letra)..." />
       </div>
       <ul class="list">
-        <li v-for="h in hits" :key="h.song.id" class="row" @click="abrir({ nome: 'musica', id: h.song.id })">
+        <li v-for="h in hits" :key="h.song.id" v-clicavel class="row" @click="abrir({ nome: 'musica', id: h.song.id })">
           <div class="key-badge">{{ h.song.key }}</div>
           <div class="grow">
             <div class="title">{{ h.song.title }}</div>

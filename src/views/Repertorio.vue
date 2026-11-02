@@ -144,7 +144,7 @@ const perm = ref(false);
       </div>
 
       <ol class="list">
-        <li v-for="(s, i) in musicas" :key="s.id" class="row" :draggable="pode"
+        <li v-for="(s, i) in musicas" :key="s.id" v-clicavel class="row" :draggable="pode"
           @dragstart="arrastando = i" @dragover.prevent @drop="soltar(i)"
           @click="abrir({ nome: 'musica', id: s.id, setlistId: sl.id })">
           <span class="num">{{ i + 1 }}</span>
@@ -180,7 +180,7 @@ const perm = ref(false);
           {{ filtroTag ? `Nenhuma música com a tag “${filtroTag}”.` : 'Nenhuma música encontrada.' }}
         </p>
         <ul class="list">
-          <li v-for="h in achadas" :key="h.song.id" class="row add-row" @click="marcar(h.song)">
+          <li v-for="h in achadas" :key="h.song.id" v-clicavel class="row add-row" @click="marcar(h.song)">
             <span aria-hidden="true" class="ms" :class="{ fill: sl.songIds.includes(h.song.id) }" style="color: var(--primary)">
               {{ sl.songIds.includes(h.song.id) ? 'check_box' : 'check_box_outline_blank' }}
             </span>

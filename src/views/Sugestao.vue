@@ -33,6 +33,10 @@ const motivo = ref(false);
         A música mudou depois desta sugestão (versão {{ x.base }} → {{ atual.versao }}). Aceitar troca pela
         versão sugerida inteira — confira as diferenças abaixo.
       </div>
+      <!-- cópia de uma música do acervo: aceitar aqui não muda a de lá -->
+      <div v-if="podeDecidir && !x.acervo && atual?.baseId" class="banner">
+        Muda só a cópia deste grupo. A música no acervo geral continua igual — p/ mudar lá, sugira no acervo.
+      </div>
       <h3 class="section-title">O que muda</h3>
       <p v-if="!atual" class="muted">A música não existe mais.</p>
       <DiffView v-else :antes="atual" :depois="x.song" />
